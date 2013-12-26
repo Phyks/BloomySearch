@@ -1,0 +1,42 @@
+<!--
+	@author=Phyks
+	@date=25122013-0133
+	@title=Hilight window in weechat
+	@tags=Weechat
+-->
+<p>I recently moved from Irssi+Screen to Weechat+Screen (and I'm planning to look at weechat interfaces in the future, to have a local irc client connecting to my server and avoid any latency while typing on low speed internet connection). My first step was to get almost the same setup as irssi. I'm very pleased with what I achieved, and weechat is definitely an excellent irc client, although it lacks a bit of usable documentation sometimes…</p>
+
+<p>To get something like my old irssi, I had to install some extensions, including :</p>
+<ul>
+    <li>text_effects.lua to have some inline text decoration such as *bold* to display bold in bold</li>
+    <li>buffers.pl to have a list of opened buffers</li>
+    <li>iset.pl to set configuration options easily</li>
+    <li>screen_away.py (which is very efficient !) to auto away when I detach my screen session</li>
+</ul>
+
+<p>I extensively used <a href="http://pascalpoitras.com/2013/05/25/my-weechat-configuration/">this link</a> and the other articles on weechat on this website, which is a reference in my opinion, to get a working base weechat configuration.</p>
+
+<p>But, one point that wasn't documented very well, is the use of a hilight window without dedicating a buffer to it. Dedicating a buffer to the hilight window means having an opened buffer in the main window, which is useless. You always select it accidentally by typing the wrong number for another buffer, and it's hidous in your buffer list (even though you can hide it from there). I don't know if this could be done in irssi, but in weechat, you can set highmon to use a bar instead of a buffer to display the "hilight window" and this is what we'll see in the following. I will assume you start with highmon plugin installed and configured, with a hilight window such as the one from Pascal Poitras.</p>
+
+<p>So, first step is to tell highmon to use a bar for output instead of the standard buffer :</p>
+<pre>/set plugins.var.perl.highmon.output bar</pre>
+
+<p>Highmon should have created a bar automatically, to put the messages in. Check weechat.bar.highmon.* options to make sure it did. Next, type :</p>
+<pre>/set plugins.var.perl.highmon.bar_lines 250</pre>
+<p>to set the number of lines to be stored in your freshly created bar.</p>
+
+<p>Then, you can edit all the preferences for the bar (size, size_max, position, priority, hide etc.) as for a standard bar, using weechat.bar.highmon.* options. Note that priority is important if you have to bars having the same position. For instance, if two bars are positioned at the top, the priority property will determine which one is above the other one.</p>
+
+<p>One last point is that we'd like to have a title for the new hilight bar (which by default doesn't have any title). The hack is to use another plugin, text_item.py to display a bar with some text. To make a title "[Hilight Monitor]", just run (after having installed text_item.py):</p>
+<pre>/set plugins.var.python.text_item.hilight_monitor_title_text all "[Hilight Monitor]"
+/bar add highmon_title top 1 0 hilight_monitor_title_text
+</pre>
+<p>And play with the position, priority and colors for the newly created bar to have a nice setup :)</p>
+
+<p>One last important thing is that, contrary to the buffer solution, you won't be able to clean easily the hilight window and to scroll in it. But, I found two aliases on #weechat (ty @silverd for the aliases) that you can bind to any key if you want:</p>
+<pre>/alias clear_highmon /mute /set plugins.var.perl.highmon.bar_lines -1;/mute /set weechat.bar.highmon.items "";/mute /set weechat.bar.highmon.items "highmon";/mute /set plugins.var.perl.highmon.bar_lines 250
+/alias scroll_highmon_down /bar scroll highmon * y+100%
+/alias scroll_highmon_up /bar scroll highmon * y-100%
+</pre>
+
+<p>You can now clear the hilight window with /clear_highmon and scroll in it with the other aliases. So, I think you are good to go for a (quite) perfect weechat setup :)</p>

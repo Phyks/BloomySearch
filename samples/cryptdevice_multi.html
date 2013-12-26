@@ -1,0 +1,22 @@
+<!--
+	@author=Phyks
+	@date=17112013-0800
+	@title=Decrypt multiple LUKS containers at boot on Arch
+	@tags=Arch, Linux
+-->
+<p>I installed Arch on my laptop with a LVM on LUKS setup. But I've two disks on my laptop (so this means at least two LUKS container) and my LVM install extended over the two disks. So, I needed to unlock two devices at boot to be able to mount my system (which is something the default encrypt hook doesn't support in Arch). Here's a way to proceed in order to achieve unlocking of multiple encrypted devices (presented with 2 devices, but can be used for more).</p>
+
+<p>First, you need to install the necessary stuff to use cryptsetup and set the encrypt hook to be load (in mkinitcpio.conf) as described in <a href="https://wiki.archlinux.org/index.php/Dm-crypt_with_LUKS#.2Fetc.2Fmkinitcpio.conf">Arch wiki</a>.</p>
+
+<p>Then, copy the file /usr/lib/initcpio/hooks/encrypt to /usr/lib/initcpio/hooks/encrypt2. Edit this last file and change any occurrence of cryptdevice and cryptkey by cryptdevice2 and cryptkey2. Also change the line</p>
+<pre>mkdir /ckey</pre>
+<p>by</p>
+<pre>if [ -d /ckey ]; then
+    mkdir /ckey
+fi
+</pre>
+<p>in order to avoid the display of a warning on boot. Load this encrypt2 hook in your mkinitcpio.conf.</p>
+
+<p>Finally, edit your command line parameters (in Grub for example), adding the required cryptdevice, cryptkey (for first device) and cryptdevice2, cryptkey2 (for second device).</p>
+
+<p>This is the best solution I've found so far, but it requires to manually update the second hook when updates are available (cryptsetup package, not all updates concern encrypt hook). Another solution was provided by the package cryptsetup-multi but this one is now obsolete and this setup is the one that works best for me.</p>
