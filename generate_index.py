@@ -3,6 +3,7 @@
 import os
 from lxml import html
 import re
+import json
 from collections import defaultdict
 
 
@@ -23,7 +24,6 @@ def remove_common_words(words):
 samples = list_directory("samples/")
 index = defaultdict(list)
 
-i = 0
 for sample in samples:
     with open(sample, 'r') as sample_fh:
         content = sample_fh.read()
@@ -40,9 +40,7 @@ for sample in samples:
     # TODO : Could use http://tartarus.org/martin/PorterStemmer/
 
     for word in words:
-        index[word].append(i)
+        index[sample].append(word)
 
-    i += 1
-
-print(samples)
-print(index.items())
+with open("index.json", 'w') as index_fh:
+    index_fh.write(json.dumps(index))
