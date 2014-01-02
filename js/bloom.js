@@ -44,6 +44,9 @@ function callback_change() {
             $("#results").append("<p>"+key+"</p>");
         }
     }
+    if(!$("#results p").length) {
+        $("#results").append("<p>No results...</p>");
+    }
 }
 
 $("#search").on('input', callback_change);

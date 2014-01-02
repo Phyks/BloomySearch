@@ -3,8 +3,8 @@
 import os
 from lxml import html
 import re
-import json
-from collections import defaultdict
+import stemmer
+from pybloom import BloomFilter
 
 
 # List all files in path directory
@@ -22,7 +22,8 @@ def remove_common_words(words):
 
 # =============================================================================
 samples = list_directory("samples/")
-index = defaultdict(list)
+filters = {}
+p = stemmer.PorterStemmer()
 
 for sample in samples:
     with open(sample, 'r') as sample_fh:
@@ -37,10 +38,11 @@ for sample in samples:
     # Remove common words
     words = remove_common_words(words)
     # Stemming to reduce the number of words
-    # TODO : Could use http://tartarus.org/martin/PorterStemmer/
+    words = [p.stem(word, 0, len(word)-1) for word in words]
 
+    filters[sample] = BloomFilter(capacity=len(words), error_rate=0.1)
     for word in words:
-        index[sample].append(word)
+        filters[sample].add(word)
 
-with open("index.json", 'w') as index_fh:
-    index_fh.write(json.dumps(index))
+print(sum(len(filter.bitarray.tobytes()) for filter in filters.values()) /
+    len(filters))
