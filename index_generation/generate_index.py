@@ -4,6 +4,7 @@ import os
 from lxml import html
 import re
 import stemmer
+from bitarray import bitarray
 from pybloom import BloomFilter
 
 
@@ -20,10 +21,15 @@ def remove_common_words(words):
     returned = [word for word in words if len(word) > 3]
     return returned
 
+
+def bitfield(n):
+    return [1 if digit=='1' else 0 for digit in bin(n)[2:]]
+
 # =============================================================================
-samples = list_directory("samples/")
+samples = list_directory("../samples/")
 filters = {}
 p = stemmer.PorterStemmer()
+write = bitarray()
 
 for sample in samples:
     with open(sample, 'r') as sample_fh:
@@ -44,5 +50,9 @@ for sample in samples:
     for word in words:
         filters[sample].add(word)
 
-print(sum(len(filter.bitarray.tobytes()) for filter in filters.values()) /
-    len(filters))
+with open('search_index', 'wb') as index_fh:
+    index_fh.write(filters[samples[0]].bitarray.tobytes()) # TODO
+
+write.extend(bitfield(len(filters[samples[0]].bitarray)))
+write.extend(filters[samples[0]].bitarray)
+print(write)

@@ -2,34 +2,40 @@ var loading = false;
 var usable = false;
 var index = false;
 
-$("form").submit(function(e) {
+window.onload = function() {
+};
+
+document.getElementById('search_form').addEventListener('submit', function(e) {
     e.preventDefault();
 });
 
-$("#search").click(function() {
-    if($(this).val() == "Search for articles...") {
-        $(this).val("");
+document.getElementById('search').addEventListener('click', function() {
+    if(this.value == "Search for articles...") {
+        this.value = "";
     }
 
     if(index === false) {
         loading = true;
-        $("#loading").text("Loading index file...");
-        $.getJSON("index.json", function(data) {
-            loading = false;
-            usable = true;
-            $("#loading").text("");
-            index = new Array();
+        document.getElementById("loading").innerHTML = "Loading index file...";
 
-            for(var key in data) {
-                index[key] = new BloomFilter(32*256, 16);
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", "/index_generation/search_index", true);
+        oReq.responseType = "arraybuffer";
 
-                for(var word_index in data[key]) {
-                    index[key].add(data[key][word_index]);
+        oReq.onload = function (oEvent) {
+            var arrayBuffer = oReq.response; // Note: not oReq.responseText
+            if (arrayBuffer) {
+                loading = false;
+                usable = true;
+                document.getElementById("loading").innerHTML = "";
+
+                var tmp = new Uint8Array(arrayBuffer);
+                for (var i = 0; i < tmp.byteLength; i++) {
+                    // TODO
                 }
             }
-
-            callback_change();
-        });
+        };
+        oReq.send(null);
     }
 });
 
@@ -37,16 +43,16 @@ function callback_change() {
     if(!usable) {
         return;
     }
-    var search = $("#search").val();
-    $("#results").html("<h2>Results :</h2>");
+    var search = document.getElementById("search").value;
+    document.getElementById("results").innerHTML = "<h2>Results :</h2>";
     for(var key in index) {
-        if(index[key].test(search)) {
-            $("#results").append("<p>"+key+"</p>");
-        }
+        //if(index[key].test(search)) { TODO
+            document.getElementById("results").innerHTML += "<p>"+key+"</p>";
+        //}
     }
-    if(!$("#results p").length) {
-        $("#results").append("<p>No results...</p>");
+    if(!document.querySelectorAll("#results p").length) {
+        document.getElementById("results").innerHTML += "<p>No results...</p>";
     }
 }
 
-$("#search").on('input', callback_change);
+document.getElementById("search").addEventListener('input', callback_change);
