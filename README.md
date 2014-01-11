@@ -1,7 +1,7 @@
 BloomJS
 ====
 
-A javascript search engine.
+A javascript search engine for static websites.
 
 ## Basic idea
 I have a static weblog, generated thanks to [Blogit](https://github.com/phyks/blogit, caution this code is ugly) and, as I only want to have html files on my server, I needed to find a way to enable users to search my blog.
@@ -40,6 +40,7 @@ Here's the format of the output from the python script:
     * […] : the bitarray itself
 
 ## Notes
+
 * I got the idea while reading [this page](http://www.stavros.io/posts/bloom-filter-search-engine/?print) found on [Sebsauvage's shaarli](http://sebsauvage.net/links/). I searched a bit for code doing what I wanted and found these ones:
 
     * https://github.com/olivernn/lunr.js
@@ -50,3 +51,19 @@ Here's the format of the output from the python script:
 * This code is mainly a proof of concept. As such, it is not fully optimized (actually, I just tweaked until the resulted files and calculations could be considered "acceptable"). For those looking for more effective solutions, here are a few things I found while looking for information on the web:
 
     * The stemming algorithm used may not be the most efficient one. People wanting to work with non-English languages or to optimize the overall computation of the index can easily move to a more effective algorithm. See [Wikipedia](http://en.wikipedia.org/wiki/Stemming) and [the stemming library in Python](https://pypi.python.org/pypi/stemming/1.0) which has C wrappers for best performances.
+
+## License
+
+TLDR; I don't give a damn to anything you can do using this code. It would just
+be nice to quote where the original code comes from. All the included libraries
+(pybloom and the stemming library) have their own license.
+
+* -----------------------------------------------------------------------------
+* "THE NO-ALCOHOL BEER-WARE LICENSE" (Revision 42):
+* Phyks (webmaster@phyks.me) wrote this file. As long as you retain this notice
+* you can do whatever you want with this stuff (and you can also do whatever
+* you want with this stuff without retaining it, but that's not cool...). If we
+* meet some day, and you think this stuff is worth it, you can buy me a
+* <del>beer</del> soda in return.
+*																		Phyks
+* ------------------------------------------------------------------------------
