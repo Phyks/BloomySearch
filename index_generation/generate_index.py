@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 from lxml import html
 import re
 import stemmer
+import json
 from bitarray import bitarray
 from pybloom import BloomFilter
 
@@ -22,14 +24,19 @@ def remove_common_words(words):
     return returned
 
 
-def bitfield(n):
-    return [1 if digit=='1' else 0 for digit in bin(n)[2:]]
+def bitfield(n, fill):
+    return [1 if digit=='1' else 0 for digit in bin(n)[2:].zfill(fill)]
 
 # =============================================================================
 samples = list_directory("../samples/")
 filters = {}
 p = stemmer.PorterStemmer()
-write = bitarray()
+write = bitarray(bitfield(len(samples), 16))
+
+if len(samples) > 65535:
+    sys.exit("[ERROR] Too many articles to index. You will have to change the "
+             "way data is stored in the binary file to handle such amount of "
+             "files.")
 
 for sample in samples:
     with open(sample, 'r') as sample_fh:
@@ -50,9 +57,16 @@ for sample in samples:
     for word in words:
         filters[sample].add(word)
 
-with open('search_index', 'wb') as index_fh:
-    index_fh.write(filters[samples[0]].bitarray.tobytes()) # TODO
+    if filters[sample].bitarray.length() > 65535:
+        sys.exit("[ERROR] Bloomfilter is too long for file "+sample+". You "
+                 "will have to change the way data is stored in the binary "
+                 "file to handle such amount of text.")
 
-write.extend(bitfield(len(filters[samples[0]].bitarray)))
-write.extend(filters[samples[0]].bitarray)
-print(write)
+    write.extend(bitfield(filters[sample].bitarray.length(), 16))
+    write.extend(filters[sample].bitarray)
+
+with open('../data/search_index', 'wb') as index_fh:
+    index_fh.write(write.tobytes())
+
+with open('../data/pages_index.json', 'w') as pages_fh:
+    pages_fh.write(json.dumps(samples))
