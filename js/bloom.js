@@ -2,8 +2,19 @@ var loading = false;
 var usable = false;
 var search_index = false;
 
-window.onload = function() {
-};
+// Check endianness to serve right file
+function checkEndian(){
+    var a = new ArrayBuffer(4);
+    var b = new Uint8Array(a);
+    var c = new Uint32Array(a);
+    b[0] = 0xa1;
+    b[1] = 0xb2;
+    b[2] = 0xc3;
+    b[3] = 0xd4;
+    if(c[0] == 0xd4c3b2a1) return "little";
+    if(c[0] == 0xa1b2c3d4) return "big";
+    else return 0;
+}
 
 document.getElementById('search_form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -19,18 +30,17 @@ document.getElementById('search').addEventListener('click', function() {
         document.getElementById("loading").innerHTML = "Loading index file...";
 
         var oReq = new XMLHttpRequest();
-        oReq.open("GET", "/data/search_index", true);
+        oReq.open("GET", "data/search_index_"+checkEndian(), true);
         oReq.responseType = "arraybuffer";
 
         oReq.onload = function (oEvent) {
             var arrayBuffer = oReq.response; // Note: not oReq.responseText
-            if (arrayBuffer) {
-                loading = false;
-                usable = true;
-                document.getElementById("loading").innerHTML = "";
 
+            if (arrayBuffer) {
                 var tmp = new Uint8Array(arrayBuffer);
                 var nb_filters = 0;
+                console.log(tmp);
+                return;
 
                 // First 16 bits == number of bitarrays
                 for (var i = 0; i < 16; i++) {
@@ -55,6 +65,9 @@ document.getElementById('search').addEventListener('click', function() {
 
                     offset += 16 + length;
                 }
+                document.getElementById("loading").innerHTML = "";
+                loading = false;
+                usable = true;
             }
             else {
                 document.getElementById("loading").innerHTML = "Error while loading search index.";
@@ -78,20 +91,20 @@ document.getElementById('search').addEventListener('click', function() {
     }
 });
 
-function callback_change() {
+/*function callback_change() {
     if(!usable) {
         return;
     }
     var search = document.getElementById("search").value;
     document.getElementById("results").innerHTML = "<h2>Results :</h2>";
-/*TODO    for(var key in index) {
+//*    for(var key in index) {
         if(index[key].test(search)) {
             document.getElementById("results").innerHTML += "<p>"+key+"</p>";
         }
-    }*/
+    }* //
     if(!document.querySelectorAll("#results p").length) {
         document.getElementById("results").innerHTML += "<p>No results...</p>";
     }
 }
 
-document.getElementById("search").addEventListener('input', callback_change);
+document.getElementById("search").addEventListener('input', callback_change);*/

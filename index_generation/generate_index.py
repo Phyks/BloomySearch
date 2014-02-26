@@ -23,15 +23,21 @@ def remove_common_words(words):
     returned = [word for word in words if len(word) > 3]
     return returned
 
-
-def bitfield(n, fill):
-    return [1 if digit=='1' else 0 for digit in bin(n)[2:].zfill(fill)]
+def padding_16(x):
+    if x < 256:
+        return bytes([0,len(samples)])
+    else:
+        return bytes([int(x/256), x%256])
 
 # =============================================================================
 samples = list_directory("../samples/")
 filters = {}
 p = stemmer.PorterStemmer()
-write = bitarray(bitfield(len(samples), 16))
+write_little = bitarray(endian="little")
+write_big = bitarray(endian="big")
+
+write_little.frombytes(padding_16(len(samples)))
+write_big.frombytes(padding_16(len(samples)))
 
 if len(samples) > 65535:
     sys.exit("[ERROR] Too many articles to index. You will have to change the "
@@ -62,11 +68,17 @@ for sample in samples:
                  "will have to change the way data is stored in the binary "
                  "file to handle such amount of text.")
 
-    write.extend(bitfield(filters[sample].bitarray.length(), 16))
-    write.extend(filters[sample].bitarray)
+    #write_little.extend(bitfield(filters[sample].bitarray.length(), 16))
+    #write_little.extend(filters[sample].bitarray)
+    #write_big.extend(bitfield(filters[sample].bitarray.length(), 16))
+    #write_big.extend(filters[sample].bitarray)
 
-with open('../data/search_index', 'wb') as index_fh:
-    index_fh.write(write.tobytes())
+with open('../data/search_index_little', 'wb') as index_fh:
+    print(write_little)
+    write_little.tofile(index_fh)
+with open('../data/search_index_big', 'wb') as index_fh:
+    print(write_big)
+    write_big.tofile(index_fh)
 
 with open('../data/pages_index.json', 'w') as pages_fh:
     pages_fh.write(json.dumps(samples))
