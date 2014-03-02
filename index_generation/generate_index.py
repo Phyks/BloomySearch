@@ -25,7 +25,7 @@ def remove_common_words(words):
 
 def padding_16(x):
     if x < 256:
-        return bytes([0,len(samples)])
+        return bytes([0,x])
     else:
         return bytes([int(x/256), x%256])
 
@@ -68,10 +68,18 @@ for sample in samples:
                  "will have to change the way data is stored in the binary "
                  "file to handle such amount of text.")
 
-    #write_little.extend(bitfield(filters[sample].bitarray.length(), 16))
-    #write_little.extend(filters[sample].bitarray)
-    #write_big.extend(bitfield(filters[sample].bitarray.length(), 16))
-    #write_big.extend(filters[sample].bitarray)
+    tmp = bitarray(endian="little")
+    tmp.frombytes(padding_16(filters[sample].bitarray.length()))
+    write_little.extend(tmp)
+    write_little.extend(filters[sample].bitarray)
+    write_little.extend([0 for i in range(filters[sample].bitarray.length() %
+                                          8)])
+    tmp = bitarray(endian="big")
+    tmp.frombytes(padding_16(filters[sample].bitarray.length()))
+    write_big.extend(tmp)
+    write_big.extend(filters[sample].bitarray)
+    write_big.extend([0 for i in range(filters[sample].bitarray.length() %
+                                          8)])
 
 with open('../data/search_index_little', 'wb') as index_fh:
     print(write_little)

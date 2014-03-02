@@ -38,33 +38,27 @@ document.getElementById('search').addEventListener('click', function() {
 
             if (arrayBuffer) {
                 var tmp = new Uint8Array(arrayBuffer);
-                var nb_filters = 0;
-                console.log(tmp);
-                return;
+                var nb_filters = tmp[0]*256+tmp[1];
 
-                // First 16 bits == number of bitarrays
-                for (var i = 0; i < 16; i++) {
-                    nb_filters += tmp[i] << i;
-                }
                 search_index = new Array(nb_filters);
 
                 // For each of the bitarrays, parse it
-                var offset = 0;
+                var offset = 2;
                 for (var i = 0; i < nb_filters; i++) {
                     // Size of the filter
-                    var length = 0;
-                    for (var j = offset; j < offset + 16; j++) {
-                        length += tmp[j] << j;
-                    }
-                    search_index[i] = new Uint8Array(length);
+                    var length = tmp[offset]*256+tmp[offset+1]; // length is a number of bytes
+
+                    var length_offset = Math.ceil(length/8);
+
+                    search_index[i] = new Uint8Array(length_offset);
 
                     // Parse filter
-                    for (var j = 16; j < 16 + length; j++) {
-                        search_index[i][j] = tmp[j + offset];
+                    for (var j = 2; j < 2 + length_offset; j++) {
+                        search_index[i][j] = tmp[offset + j];
                     }
-
-                    offset += 16 + length;
+                    offset += 2 + length_offset;
                 }
+                console.log(search_index);
                 document.getElementById("loading").innerHTML = "";
                 loading = false;
                 usable = true;
