@@ -69,6 +69,7 @@ class BloomFilter():
         r = self._locations
         a = self.fnv_1a(v)
         b = self.fnv_1a_b(a)
+        print(b)
         i = 0
         x = a % self.m
         while i < self.k:
@@ -114,44 +115,38 @@ class BloomFilter():
         v = (v & 0x33333333) + ((v >> 2) & 0x33333333)
         return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24
 
-    def xor32bits(self, a, b):
-        # Cf https://stackoverflow.com/questions/1694507/difference-between-operator-in-js-and-python
-        m = (a ^ b) % (1 << 32)
-        if m > (1 << 16):
-            m -= 1 << 32
-        return m
-
     def fnv_1a(self, v):
         """
         Fowler/Noll/Vo hashing.
         """
         n = len(v)
-        a = 2166136261
+        a = np.int32(2166136261)
         i = 0
         while i < n:
-            c = ord(v[i])
-            d = c & 0xff000000
+            c = np.int32(ord(v[i]))
+            d = np.int32(c) & np.int32(0xff000000)
             if d:
-                a = self.xor32bits(a, d >> 24)
-                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
-            d = c & 0xff0000
+                a ^= np.int32(d >> 24)
+                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
+            d = c & np.int32(0xff0000)
             if d:
-                a = self.xor32bits(a, d >> 16)
-                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
-            d = c & 0xff00
+                a ^= np.int32(d >> 16)
+                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
+            d = c & np.int32(0xff00)
             if d:
-                a = self.xor32bits(a, d >> 8)
-                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
-            a = self.xor32bits(a, c & 0xff)
-            a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
-            print(a << 24)
+                a ^= np.int32(d >> 8)
+                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
+            a ^= np.int32(c & 0xff)
+            a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
+            print(a)
             i += 1
         # From http://home.comcast.net/~bretm/hash/6.html
-        a += a << 13
-        a = self.xor32bits(a, a >> 7)
-        a += a << 3
-        a = self.xor32bits(a, a >> 17)
-        a += a << 5
+        a += np.int32(a << 13)
+        a ^= np.int32(a >> 7)
+        a += np.int32(a << 3)
+        a ^= np.int32(a >> 17)
+        a += np.int32(a << 5)
+        print(a)
         return a & 0xffffffff
 
     def fnv_1a_b(self, a):
@@ -160,8 +155,9 @@ class BloomFilter():
         """
         a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
         a += a << 13
-        a = self.xor32bits(a, a >> 7)
+        a ^= a >> 7
         a += a << 3
-        a = self.xor32bits(a, a >> 17)
+        a ^= a >> 17
         a += a << 5
+        print(a)
         return a & 0xffffffff
