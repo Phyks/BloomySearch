@@ -15,7 +15,7 @@ function callback() {
 
     // Sets up the page, that is now ready
     ready = true;
-    document.getElementById('main').innerHTML = '<form id="search_form"><p><input type="text" id="search" name="search" placeholder="Search for articles..."/></p></form>';
+    document.getElementById('main').innerHTML = '<form role="form" id="search_form"><p class="form-group"><label for="search">What are you thinking about?</label><input class="form-control" type="text" id="search" name="search" placeholder="Type something to search for…"/></p></form>';
 
     // Handle onchange actions
     document.getElementById('search').oninput = function (e) {
@@ -23,7 +23,12 @@ function callback() {
             return;
         }
 
-        filter_results(e.target.value);
+        if (e.target.value !== "") {
+            filter_results(e.target.value);
+        }
+        else {
+            document.getElementById("results").innerHTML = "";
+        }
     }
 }
 
@@ -53,14 +58,14 @@ function filter_results(query) {
     }
 
     if (results.length > 0) {
-        results_html = '<ul>';
+        results_html = '<h4>' + results.length + ' results found:</h4><div>';
         for (var i = 0; i < results.length; i++) {
-            results_html += '<li>' + results[i] + '</li>';
+            results_html += '<a href="' + results[i]["url"] + '" class="list-group-item">' + results[i]["title"] + '</a>';
         }
-        results_html += '</ul>'
+        results_html += '</div>'
     }
     else {
-        results_html = '<p>Aucun résultat.</p>';
+        results_html = '<p class="alert alert-danger">No results found =(</p>';
     }
     document.getElementById('results').innerHTML = results_html;
 }
@@ -90,14 +95,14 @@ oReq.onload = function (oEvent) {
             tmp_array = byte_array.subarray(1 + nb_bloom_filters + l, 1 + nb_bloom_filters + l + lengths[i]);
             var l = lengths[i];
             bloom.push(new BloomFilter(tmp_array, error_rate));
-            console.log(tmp_array);
-            console.log(bloom[0].test("concern"));
         }
 
         callback();
     }
     else {
-        document.getElementById('error').innerHTML = 'Unable to load the bloom filters.';
+        var error = document.getElementById('error');
+        error.innerHTML = 'Unable to load the bloom filters.';
+        error.className = "alert alert-danger";
     }
 };
 oReq.send(null);

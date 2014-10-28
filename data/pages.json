@@ -1,1 +1,1 @@
-{"index": ["../samples/cryptdevice_multi.html", "../samples/highmon_weechat.html"]}
+{"index": [{"title": "Decrypt multiple LUKS containers at boot on Arch", "url": "samples/cryptdevice_multi.html"}, {"title": "Hilight window in weechat", "url": "samples/highmon_weechat.html"}]}

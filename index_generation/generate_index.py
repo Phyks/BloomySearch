@@ -36,7 +36,10 @@ def remove_common_words(words):
 
 if __name__ == "__main__":
     error_rate = 0.1
+
+    os.chdir(os.path.dirname(sys.argv[0]))
     samples = list_directory("../samples/")
+    pages = []
     filters = []
     p = stemmer.PorterStemmer()
 
@@ -58,11 +61,13 @@ if __name__ == "__main__":
 
         tmp_filter = bloom.BloomFilter(capacity=len(words),
                                        error_rate=error_rate)
-        words = json.loads('["solut", "devic", "cryptkey2", "contain", "chang", "thi", "conf", "ckeyfiin", "support", "load", "here", "laptop", "file", "exampl", "paramet", "cryptsetup", "when", "proce", "line", "cryptkei", "wiki", "edit", "present", "describ", "ckei", "grub", "first", "warn", "mkinitcpio", "with", "updat", "mount", "manual", "ckeybyif", "least", "need", "multipl", "also", "found", "arch", "then", "us", "encrypt", "packag", "that", "over", "someth", "hook", "doesn", "avail", "avoid", "work", "which", "provid", "order", "initcpio", "anoth", "setup", "mean", "necessari", "default", "disk", "best", "linemkdir", "luk", "system", "unlock", "occurr", "requir", "command", "abl", "cryptdevice2", "encrypt2", "instal", "multi", "last", "extend", "obsolet", "boot", "your", "achiev", "second", "mkdir", "stuff", "final", "displai", "concern", "ad", "cryptdevic", "more", "copi"]')
         for word in words:
             tmp_filter.add(word)
 
         filters.append(tmp_filter.buckets)
+
+        pages.append({"title": re.search(r"@title=(.*)\n", content).group(1),
+                      "url": sample[3:]})
 
     # First Int32 is length
     filters_to_write = struct.pack("<i", len(filters))
@@ -78,4 +83,4 @@ if __name__ == "__main__":
         index_fh.write(filters_to_write)
 
     with open("../data/pages.json", "w") as pages_fh:
-        pages_fh.write(json.dumps({"index": samples}))
+        pages_fh.write(json.dumps({"index": pages}))

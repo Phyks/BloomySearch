@@ -123,11 +123,10 @@ class BloomFilter():
         http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
         """
         v -= ctypes.c_int(ctypes.c_int(v >> 1).value & ctypes.c_int(0x55555555).value).value
-        v = ctypes.c_int(v & 0x33333333).value + c_types.c_int(ctypes.c_int(v >> 2).value & 0x33333333).value
+        v = ctypes.c_int(v & 0x33333333).value + ctypes.c_int(ctypes.c_int(v >> 2).value & 0x33333333).value
         return ctypes.c_int((ctypes.c_int((v + ctypes.c_int(v >> 4).value) & 0xF0F0F0F).value * 0x1010101) >> 24).value
 
-
-    def rshift(self,val, n):
+    def rshift(self, val, n):
         """
         Implements the >>> JS operator.
 
