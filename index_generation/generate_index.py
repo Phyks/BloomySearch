@@ -1,92 +1,83 @@
 #!/usr/bin/env python3
 
+"""
+Inspired by
+http://www.stavros.io/posts/bloom-filter-search-engine/?print
+
+
+You have to install the numpy python module for bloom to work.
+"""
+
+import bloom
+import json
 import os
-import sys
-from lxml import html
 import re
 import stemmer
-import json
-from bitarray import bitarray
-from pybloom import BloomFilter
+import struct
+import sys
+
+from lxml import html
 
 
-# List all files in path directory
 def list_directory(path):
-    fichier = []
+    """Recursively list all files in a given directory."""
+    files_list = []
     for root, dirs, files in os.walk(path):
         for i in files:
-            fichier.append(os.path.join(root, i))
-    return fichier
+            files_list.append(os.path.join(root, i))
+    return files_list
 
 
 def remove_common_words(words):
+    """Removes all words that are less than 3 characters long."""
     returned = [word for word in words if len(word) > 3]
     return returned
 
-def padding_16(x):
-    if x < 256:
-        return bytes([0,x])
-    else:
-        return bytes([int(x/256), x%256])
 
-# =============================================================================
-samples = list_directory("../samples/")
-filters = {}
-p = stemmer.PorterStemmer()
-write_little = bitarray(endian="little")
-write_big = bitarray(endian="big")
+if __name__ == "__main__":
+    error_rate = 0.1
+    samples = list_directory("../samples/")
+    filters = []
+    p = stemmer.PorterStemmer()
 
-write_little.frombytes(padding_16(len(samples)))
-write_big.frombytes(padding_16(len(samples)))
+    for sample in samples:
+        with open(sample, 'r') as sample_fh:
+            content = sample_fh.read()
 
-if len(samples) > 65535:
-    sys.exit("[ERROR] Too many articles to index. You will have to change the "
-             "way data is stored in the binary file to handle such amount of "
-             "files.")
+        # Get text from HTML content
+        words = html.fromstring(content).text_content().replace("\n", "")
+        words = re.findall(r"[\w]+", words)
+        # Remove all punctuation etc., convert words to lower and delete
+        # duplicates
+        words = list(set([word.lower() for word in words]))
 
-for sample in samples:
-    with open(sample, 'r') as sample_fh:
-        content = sample_fh.read()
+        # Remove common words
+        words = remove_common_words(words)
+        # Stemming to reduce the number of words
+        words = list(set([p.stem(word, 0, len(word)-1) for word in words]))
 
-    # Get text from HTML content
-    words = html.fromstring(content).text_content().replace("\n", "")
-    words = re.findall(r"[\w]+", words)
-    # Remove all punctuation etc., convert words to lower and delete duplicates
-    words = list(set([word.lower() for word in words]))
+        tmp_filter = bloom.BloomFilter(capacity=len(words),
+                                       error_rate=error_rate)
+        words = json.loads('["solut", "devic", "cryptkey2", "contain", "chang", "thi", "conf", "ckeyfiin", "support", "load", "here", "laptop", "file", "exampl", "paramet", "cryptsetup", "when", "proce", "line", "cryptkei", "wiki", "edit", "present", "describ", "ckei", "grub", "first", "warn", "mkinitcpio", "with", "updat", "mount", "manual", "ckeybyif", "least", "need", "multipl", "also", "found", "arch", "then", "us", "encrypt", "packag", "that", "over", "someth", "hook", "doesn", "avail", "avoid", "work", "which", "provid", "order", "initcpio", "anoth", "setup", "mean", "necessari", "default", "disk", "best", "linemkdir", "luk", "system", "unlock", "occurr", "requir", "command", "abl", "cryptdevice2", "encrypt2", "instal", "multi", "last", "extend", "obsolet", "boot", "your", "achiev", "second", "mkdir", "stuff", "final", "displai", "concern", "ad", "cryptdevic", "more", "copi"]')
+        for word in words:
+            tmp_filter.add(word)
 
-    # Remove common words
-    words = remove_common_words(words)
-    # Stemming to reduce the number of words
-    words = [p.stem(word, 0, len(word)-1) for word in words]
+        filters.append(tmp_filter.buckets)
+        print(tmp_filter.buckets)
+        sys.exit()
 
-    filters[sample] = BloomFilter(capacity=len(words), error_rate=0.1)
-    for word in words:
-        filters[sample].add(word)
+    # First Int32 is length
+    filters_to_write = struct.pack("<i", len(filters))
+    # Then comes the length of each filter
+    for i in filters:
+        filters_to_write += struct.pack("<i", len(i))
+    # Finally comes the filters themselves
+    for i in filters:
+        filters_to_write += struct.pack("<%di" % len(i), *i)
 
-    if filters[sample].bitarray.length() > 65535:
-        sys.exit("[ERROR] Bloomfilter is too long for file "+sample+". You "
-                 "will have to change the way data is stored in the binary "
-                 "file to handle such amount of text.")
+    # Write everything
+    with open("../data/filters", "wb") as index_fh:
+        index_fh.write(filters_to_write)
 
-    tmp = bitarray(endian="little")
-    tmp.frombytes(padding_16(filters[sample].bitarray.length()))
-    write_little.extend(tmp)
-    write_little.extend(filters[sample].bitarray)
-    write_little.extend([0 for i in range(filters[sample].bitarray.length() %
-                                          8)])
-    tmp = bitarray(endian="big")
-    tmp.frombytes(padding_16(filters[sample].bitarray.length()))
-    write_big.extend(tmp)
-    write_big.extend(filters[sample].bitarray)
-    write_big.extend([0 for i in range(filters[sample].bitarray.length() %
-                                          8)])
-
-with open('../data/search_index_little', 'wb') as index_fh:
-    print(write_little)
-    write_little.tofile(index_fh)
-with open('../data/search_index_big', 'wb') as index_fh:
-    print(write_big)
-    write_big.tofile(index_fh)
-
-with open('../data/pages_index.json', 'w') as pages_fh:
-    pages_fh.write(json.dumps(samples))
+    with open("../data/pages.json", "w") as pages_fh:
+        pages_fh.write(json.dumps({"index": samples}))

@@ -1,7 +1,6 @@
 /* These are some basic unit-tests for the bloom.js module */
 
 var bloom = new BloomFilter(4, 0.1);
-console.log(bloom);
 
 // Add some elements to the filter.
 bloom.add("foo");
@@ -22,6 +21,7 @@ var array = [].slice.call(bloom.buckets),
     json = JSON.stringify(array);
 
 console.log(array);
+console.log(json);
 
 // Deserialisation. Note that the any array-like object is supported, but
 // this will be used directly, so you may wish to use a typed array for
