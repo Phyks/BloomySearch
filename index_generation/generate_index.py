@@ -63,8 +63,6 @@ if __name__ == "__main__":
             tmp_filter.add(word)
 
         filters.append(tmp_filter.buckets)
-        print(tmp_filter.buckets)
-        sys.exit()
 
     # First Int32 is length
     filters_to_write = struct.pack("<i", len(filters))
