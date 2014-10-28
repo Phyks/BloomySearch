@@ -120,33 +120,31 @@ class BloomFilter():
         Fowler/Noll/Vo hashing.
         """
         n = len(v)
-        a = np.int32(2166136261)
+        a = 2166136261
         i = 0
         while i < n:
-            c = np.int32(ord(v[i]))
-            d = np.int32(c) & np.int32(0xff000000)
+            c = ord(v[i])
+            d = c & 0xff000000
             if d:
-                a ^= np.int32(d >> 24)
-                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
-            d = c & np.int32(0xff0000)
+                a ^= d >> 24
+                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
+            d = c & 0xff0000
             if d:
-                a ^= np.int32(d >> 16)
-                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
-            d = c & np.int32(0xff00)
+                a ^= d >> 16
+                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
+            d = c & 0xff00
             if d:
-                a ^= np.int32(d >> 8)
-                a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
-            a ^= np.int32(c & 0xff)
-            a += np.int32((a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24))
-            print(a)
+                a ^= d >> 8
+                a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
+            a ^= c & 0xff
+            a += (a << 1) + (a << 4) + (a << 7) + (a << 8) + (a << 24)
             i += 1
         # From http://home.comcast.net/~bretm/hash/6.html
-        a += np.int32(a << 13)
-        a ^= np.int32(a >> 7)
-        a += np.int32(a << 3)
-        a ^= np.int32(a >> 17)
-        a += np.int32(a << 5)
-        print(a)
+        a += a << 13
+        a ^= a >> 7
+        a += a << 3
+        a ^= a >> 17
+        a += a << 5
         return a & 0xffffffff
 
     def fnv_1a_b(self, a):
