@@ -1,0 +1,18 @@
+<!--
+	@author=Phyks
+	@date=04082014-0005
+	@title=Les énigmes du réseau Free Mobile
+	@tags=Phyks
+-->
+
+<p>C'est très étrange… Là où je suis, la connexion SSH est toujours utilisable (avec un lag important rendant très insupportable toute édition de fichiers, mais Weechat <em>over</em> SSH est utilisable), mais le débit sur le port 80 est très fluctuant. Quelques fois les pages se chargent très rapidement, quelques fois il n'y a pas moyen de charger une seule page, même après 10 minutes d'attente et trois tentatives (indépendamment du domaine, donc pas un problème de <em>peering</em> <em>a priori</em>).</p>
+
+<p>Par contre, passer sa connexion web dans un tunnel SOCKS améliore grandement les choses. Et de façon générale, j'ai déjà remarqué ça à plusieurs reprises sur des connexion lentes (Free Mobile, mais aussi certains hotspots etc.). À 18h, la connexion est toujours inutilisable, mais ça rend la connexion internet utilisable le reste du temps.</p>
+
+<p>Je précise que je suis dans une zone censée être couverte en <em>H+</em> (je le cherche encore le fabuleux débit promis par toutes les dernières technos, quand en HSDPA, j'ai tout juste un débit d'EDGE) et encore loin de mon plafond mensuel de 3Go (et de toutes façons, le même comportement est observé avec des clients utilisant peu la 3G)… qu'est-ce que ça va être après ?</p>
+
+<p>Du coup, Free bride-t-il le port 80 ? Ou l'antenne est-elle surchargée (par des gens qui font du web, donc du port 80) ? Ça m'étonne quand même cette différence <strong>significative</strong> de débit selon les ports utilisés (à titre de comparaison, je ne pouvais pas mettre à jour mon système avec <code>yaourt</code> tout à l'heure, débit trop faible, mais un téléchargement de quelques mégaoctets dans mon Firefox sur proxy SOCKS se faisait en un temps « raisonnable » et je peux récupérer mes emails par POP/IMAP sans problème).</p>
+
+<p>Bref, c'est pas la première fois que je remarque ça, et heureusement j'ai la possibilité de faire un tunnel SOCKS sur mon kimsufi, mais comment fait Madame Michu ?! Et surtout… pourquoi ce comportement si étrange sur le port 80 ?</p>
+
+<p>P.S. : J'ai pensé au début que c'était Orange qui bridait le débit des abonnés Free sur ses antennes, me rappelant d'histoires similaires au lancement, et confirmé par un portable chez Sosh qui tourne sans problème. Mais il semblerait que je sois sur une antenne Free…</p>

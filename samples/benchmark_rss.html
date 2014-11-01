@@ -1,0 +1,69 @@
+<!--
+	@author=Phyks
+	@date=10072014-1725
+	@title=Quick and dirty benchmark of RSS/ATOM parsing libs
+	@tags=Dev, Web
+-->
+<p><strong>EDIT:</strong> I just realized that the PHP function <span class="monospace">microtime</span> does not return what I expected. This does not change much the results (to compare the solutions) but change the units. I update the results accordingly.</p>
+
+<p>As I wrote in a <a href="http://phyks.me/2014/07/lecteur_rss_ideal.html">previous article</a>. I am working on a rss reader that could fit my needs. For this purpose, I am currently trying to see which way is the best way to parse RSS and ATOM feeds in PHP.</p>
+
+<p>I searched on the web for benchmarks, but I could only find old benchmarks, for old version of the libs and weird stuff (like parsing directly the feed with regex). So, I did a quick and dirty benchmark (and this is the reason why this article is in english :).</p>
+
+<h2>Which lib is the best one to parse RSS and ATOM feeds ?</h2>
+
+<p>I searched on the web for the available solutions. I found three main solutions (ordered from the most lightweight one to the less lightweight one):</p>
+<ul>
+    <li><a href="https://github.com/broncowdd/feed2array">feed2array</a>, a lib by <a href="http://warriordudimanche.net/">Bronco</a> which is basically a wrapper around SimpleXML and is used by <a href="http://lehollandaisvolant.net/">timo</a> in his RSS reader implemented in <a href="https://github.com/timovn/blogotext">blogotext</a>. So it is tested on a quite wide range of feeds and should be considered fully working.</li>
+    <li><a href="http://lastrss.oslab.net/">lastRSS</a>, a dedicated lib written in PHP</li>
+    <li><a href="http://simplepie.org">SimplePie</a>, the well known lib, very complete, able to handle a wide range of feeds, correctly <strong>and</strong> incorrectly formatted, but very heavy.</li>
+</ul>
+
+<p>My goal was just to do a quick benchmark, so it is complete dirty and may not be very precise, but I did not need more. I did not test extensively all the available libs, especially all the wrappers around SimpleXML as the one I found was sufficient, and is basic enough to reflect a general result.</p>
+
+<p>My test lies on six RSS and ATOM feeds (both of them, to be sure that the lib worked on them) with a total of 75 articles. I parse them with the corresponding lib, and I do not display anything but the total time to parse them. I do not mind the ability of the lib to handle specially malformed feeds as these should not exist and parsing them may encourage their use. So, I am just interested in the time needed to parse these 6 feeds.</p>
+
+<p>The three libs parsed all of them successfully. I ran the test on my laptop, which can be considered almost 100% idle.</p>
+
+<p>The results are:</p>
+<table>
+    <tr>
+        <td>feed2array (and similar basic simpleXML based solution)</td>
+        <td>about 40ms</td>
+    </tr>
+    <tr>
+        <td>lastRss</td>
+        <td>about 120ms and I got some mistakes</td>
+    </tr>
+    <tr>
+        <td>SimplePie</td>
+        <td>about 280ms</td>
+    </tr>
+</table>
+
+<p>So, for my personnal case, I would simply say “the simpler the better” and go for feed2array that works perfectly on the feeds I want to use and is way faster than the overkill libraries. Very often I read that SimplePie was heavy and slow (despite their advertisement as “super fast”) and it seems to be confirmed by my results.</p>
+
+<p>In conclusion, however these results are just to be considered as orders of magnitude, and not precise measurements, I would say that you should avoid any complicated and overkill library unless you really need some of the advanced features it has. Your script will be way faster (up to 5 times faster or so according to these results).</p>
+
+<p><em>Note:</em> I only focused on these three libraries as it appears that they are the three main libraries available for this purpose (except for feed2array for which there are plenty of similar scripts). I wanted only scripts under a fully open source license, which eliminated some of the others. The only notable ones that I could have taken into account (I think) are the feed library from Zend, but I did not want to search for a way to get only the relevant functions from Zend, and the newly integrated PHP extensions such as XSLT. However, these PHP extensions are not widely available, and not built-in at all, so they may not be available on most of the shared hostings.</p>
+
+<h2>Store in a database / files or parse it each time ?</h2>
+
+<p>Next question I had was how do this time compare with retrieving infos from a database. For this purpose, I compared three times:</p>
+<ul>
+    <li>time to parse the feeds using feed2array, which is about 40ms, as found before.</li>
+    <li>time to load the arrays representing the feeds from serialized and gzipped files, which is about 8ms.</li>
+    <li>time to load 75 elements (id, description, guid, link and pubDate) from a sqlite database, not optimized at all, which is about 2ms.</li>
+</ul>
+
+<p>As we could expect, it is longer to parse the feeds than to load them from a storage. So, it is definitely not a good idea to parse them at each page generation. Plus RSS format is not practical at all to do search and complex queries.</p>
+
+<p>The legit solutions are then to use flat files or a database. The difference between the two times is not so large, considering that files are gzipped and that I actually stored a bit more information in the file than in the table.</p>
+
+<p>However, there is not much optimization to do with files, whereas there are many ways to improve my results with a database. For instance, I used a basic sqlite table, without any potential optimization. But I could have used a more robust solution. If performances are really a concern, I could even use a temporary database, stored in RAM, to store the feeds elements. If this table is lost, that is not a big deal, as I will only have to do a refresh to get them back.</p>
+
+<p>Finally, one of the major problems with SQLite seems to be that it may be slow to write and completely locks the database when writing inside. But, this is also the case for flat files.</p>
+
+<p>In conclusion, I would say that the best solution appears to be SQLite with PDO. Actually, the use of PDO will enable to change the database very easily, and SQLite might be as good (if not better) as flat files.</p>
+
+<p><em>Note:</em> I put all my code and the test rss feeds in a zip archive available <a href="https://pub.phyks.me/benchmark_rss.zip">here</a>.</p>

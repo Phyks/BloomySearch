@@ -40,3 +40,12 @@
 </pre>
 
 <p>You can now clear the hilight window with /clear_highmon and scroll in it with the other aliases. So, I think you are good to go for a (quite) perfect weechat setup :)</p>
+
+<p><strong>Update:</strong></p>
+    <ul>
+        <li>You can define your own keyboard shortcut in the following way:
+            <pre>/key bind KEY /scroll_highmon</pre>
+            where KEY is some key or combination of key (for instance meta-meta2-A or whatever you want). You can do the same for <span class="monospace">/clear_highmon</span> and <span class="monospace">/scroll_highmon_up</span>.
+        </li>
+        <li>By default, the highmon bar won't autoscroll. To enable autoscroll, you should set <span class="monospace">plugins.var.perl.highmon.bar_scrolldown</span> to <span class="monospace">on</span>.</li>
+    </ul>

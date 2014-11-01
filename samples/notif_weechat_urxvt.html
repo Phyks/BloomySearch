@@ -1,0 +1,26 @@
+<!--
+	@author=Phyks
+	@date=20022014-2057
+	@title=Local notifications for Weechat and UrXVT
+	@tags=Weechat, Linux
+-->
+<p>After moving from irssi to weechat, I decided to look for a way to have local notifications for IRC messages. The problem is that I run weechat through a screen on my server, which I access thanks to SSH. Thus, I need to find a way to allow weechat to communicate to my local terminal and send notifications.</p>
+
+<p>I found many solutions on the web which were using a local server or a pipe file. But these aren't fitted to my needs, as they need an external program running on my machine, which I don't want. I was quite sure there could be a way to do it, with nothing more than my terminal emulator and weechat plugins, and I finally found it. My solution is based on <a href="http://artisan.karma-lab.net/ajouter-notification-a-urxvt" lang="fr">karma-lab</a>'s one [French].</p>
+
+<p>The idea is to use the Bell signal which corresponds to the ASCII escape sequence 7 to raise attention (beep signal). The following steps work fine with UrXVT and weechat in a screen session. It may be possible to adapt this to other terminal emulators or terminal multiplexers (such as tmux) but I don't use them and can't help you much with it. We will define our own escape sequence, that will be interpreted by an UrXVT plugin and will spawn a notification with the IRC message.</p>
+
+<p>First of all, you will have to modify your <span class="monospace">~/.Xdefaults</span> or your <span class="monospace">~/.Xresources</span> to tell UrXVT to listen for bell signals. In order to do so, just add the following line:</p>
+<pre>URxvt*urgentOnBell: true</pre>
+<p>Then, reload it:</p>
+<pre>$ xrdb -load ~/.Xdefaults</pre>
+
+<p>Your UrXVT terminal now listens to bell signals. But we'd like them to spawn real local notifications. For this, I used libnotify, which is built-in in gnome. The main idea is to enhance our bell signal with a more complete escape sequence to include a message to display (using the so-called osc sequences). Thus, the sequence sent to UrXVT will look like <span class="monospace">[ESC]777;notify;TITRE;MESSAGEBELL]</span>. Just add the following plugin (written by <a href="http://artisan.karma-lab.net/ajouter-notification-a-urxvt">Karma-lab</a>[French] and slightly modified by me to enhance security) to your UrXVT and you are ready to go. So, you should put <a href="https://snippet.phyks.me/?snippet=52de79d12e4c9">this plugin</a> in <span class="monospace">/usr/lib/urxvt/perl/notify</span>.</p>
+
+<p>To test that everything worked correctly, you can use the following command:</p>
+<pre>$ echo -ne "\033]777;notify;Moi;Hello World\007\007"</pre>
+<p>which should spawn an "Hello World" notification on your desktop.</p>
+
+<p>Finally, if the previous example is working fine, let's integrate it to Weechat. We'll need another plugin for weechat, to make him write this escape sequence when needed to send notifications. This plugin is also from karma-labs, but as my weechat is running in a <span class="monospace">screen</span> session, I had to tweak it a bit. I improved security of the plugin as well, to prevent any unauthorized code execution. Concerning <span class="monospace">screen</span>, it is “consuming” the escape sequences for itself, and you have to tweak it a bit to make it pass through <span class="monospace">screen</span>. The python script to load in your Weechat can be found <a href="https://snippet.phyks.me/?snippet=52de79829dcbb">here</a>.</p>
+
+<p>Have fun with IRC and your brand new notifications !</p>

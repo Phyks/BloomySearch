@@ -1,0 +1,24 @@
+<!--
+	@author=Phyks
+	@date=15072014-2220
+	@title=Specific Vim config per Git repository
+	@tags=Linux, Vim
+-->
+<p>I was looking for a way to add custom vim options on a per-repo basis. The standard way I saw for now, was adding some comments to change the Vim config on a per-file basis. There were some alternatives which were working for any project folder (and not only git repos) but they were only working if you start Vim from the root of the project, or they were exploring the tree from local folder up to root (and needed a plugin). None of them were satisfactory.</p>
+
+<p>When I edit a file and need specific Vim configuration, it is usually inside a git repo. So, it is easy to know what is the root folder, and I just wanted to search for a <span class="monospace">Vimrc</span> file in this folder. No complicated tree searching, working from anywhere inside the repo, no per-file specific configuration.</p>
+
+<p>First of all, the magic command I used to find the git root folder is <span class="monospace">git rev-parse --show-top-level</span>.</p>
+
+<p>Then, all I had to do is wrap it correctly in my <span class="monospace">.vimrc</span>:</p>
+<code>
+<pre>" Git specific configuration
+let git_path = system("git rev-parse --show-toplevel 2>/dev/null")
+let git_vimrc = substitute(git_path, '\n', '', '') . "/.vimrc"
+if !empty(glob(git_vimrc))
+    exec ":source " . git_vimrc
+endif
+</pre>
+</code>
+
+<p>This small code, added at the end of your <span class="monospace">.vimrc</span> will just look for a <span class="monospace">.vimrc</span> at the root the git repository and source it if possible. That's exactly what I wanted :)</p>

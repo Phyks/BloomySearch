@@ -1,0 +1,69 @@
+<!--
+	@author=Phyks
+	@date=16072014-1900
+	@title=Pourquoi la GPL n'est pas (si) libre
+	@tags=Libre
+-->
+<p>Cet article est une traduction (dont je ne garantis pas la qualité :) de <a href="http://noordering.wordpress.com/2009/01/20/why-the-gpl-is-not-free/">cet article (en anglais)</a>. Je n'ai pas réussi à contacter l'auteur, et si celui-ci passe par là et souhaite le retrait de la traduction, je la retirerai.</p>
+
+<p>Cet article résume bien le problème que me pose la clause de redistribution sous une licence compatible, qui complique bien souvent l'utilisation de la licence (notamment car ce qu'on peut réellement faire avec un code sous GPL n'est pas toujours très clair et intuitif). C'est une des raisons pour laquelle je privilégie généralement une licence plus permissive, comme la <a href="https://tldrlegal.com/license/mit-license">MIT</a>. La dernière partie sur l'échec de la GPL est moins convaincante, et peut être même un peu tirée par les cheveux, mais elle fait partie de l'article donc je la laisse.</p>
+
+<p>À partir de maintenant et dans toute la suite, «&nbsp;je&nbsp;» désigne donc l'auteur de l'article précédent.</p>
+
+<h1>Pourquoi la GPL n'est pas libre</h1>
+
+<h2>Introduction</h2>
+
+<p>La <a href="http://www.fsf.org/">Free Software Foundation (FSF)</a> présente la <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> comme un défenseur idéal de vos libertés. On nous dit que la GPL est au cœur de la défense de quatre libertés :</p>
+<ol>
+    <li>La liberté de faire tourner le programme, pour n'importe quelle raison (liberté 0).</li>
+    <li>La liberté d'étudier comment le programme fonctionne, et de l'adapter à vos besoins (liberté 1). L'accès au code source est une condition préliminaire à cette liberté.</li>
+    <li>La liberté de redistribuer des copies pour que vous puissiez facilement aider vos voisins (liberté 2).</li>
+    <li>La liberté d'améliorer le programme et de diffuser les améliorations (et les versions modifiées en général) au public, pour que la communauté entière en bénéficie (liberté 3). L'accès au code source est une condition préliminaire à cette liberté.</li>
+</ol>
+
+<p><a href="http://www.gnu.org/philosophy/free-sw.html">« Qu'est-ce que le logiciel libre ? », sur le site de la GNU</a></p>
+
+<p>J'affirme cependant que la GPL ne nous donne pas de liberté, mais juste différentes restrictions. J'affirme de plus qu'elle ne nous donne pas toutes les libertés précédentes. Dans cet article, je défend que la GPL est intrinsèquement imparfaite quand il s'agit de libérer les logiciels.</p>
+
+
+<h2>Qu'est-ce que j'ai écrit ?</h2>
+
+<p>Permettez moi d'ouvrir une parenthèse avant de commencer. Je voudrais présenter un sujet lié qui est au cœur de mon argumentation, et qui est la question de savoir combien de code exactement vous avez écrit. Imaginons un scénario typique : vous êtes l'auteur d'une bibliothèque libre et <em>open source</em>. Le but de cette bibliothèque n'importe pas particulièrement, donc disons qu'elle sert à chiffrer des <em>widgets</em>. Vous mettez tout votre talent dans cette bibliothèque, et elle devient stable et très complète. Le diagramme représente le projet à ce moment :</p>
+
+<p style="text-align:center;"><a href="@article_path/gpl_pas_libre_1.png"><img src="@article_path/gpl_pas_libre_1.png" alt="Votre projet, initialement."/></a><br/>
+Vous êtes fier de votre projet.</p>
+
+<p>Supposons donc maintennt qu'une tierce partie prenne votre code et construise quelque chose par dessus. On pourrait le représenter comme ceci :</p>
+
+<p style="text-align:center;"><a href="@article_path/gpl_pas_libre_2.png"><img src="@article_path/gpl_pas_libre_2.png" alt="Des ajouts à votre projet."/></a><br/>
+Un important et un petit ajout à votre projet.</p>
+
+<p>Ce qui est important ici, c'est de réaliser que la quantité de code que vous avez écrite ne change pas. Même si l'ajout de la tierce partie consiste seulement en une jolie interface graphique pour votre bibliothèque, la quantité de code que vous avez écrite n'a pas augmenté, ni diminué.</p>
+
+
+<h2>Ce que vous couvrez avec une licence</h2>
+
+<p>Ok, posons donc maintenant la question : quelle est la pertinence de tout ceci ? Ça nous a aidé à clarifier ce que vous couvrez exactement par la licence lorsque vous appliquez une licence GPL à votre code. Vous couvrez <em>votre</em> code, et seulement votre code. Et pourtant, la GPL restreint la licence des travaux dérivés. Notons ici que les travaux dérivés sont <em>intégralement</em> le travail de quelqu'un d'autre.</p>
+
+<p>L'argument le plus courant que j'ai entendu pour favoriser la GPL est qu'avec une licence plus faible (disons <a href="http://www.opensource.org/licenses/bsd-license.php">BSD</a>), une tierce partie peut prendre votre code, l'étendre, et fermer l'accès aux sources. Réfléchissons donc à ce que cela signifie. Pour fermer l'accès à votre code, ils auraient du le prendre, retirer toutes les sources en accès libre pour ce code, et ensuite le distribuer à nouveau en <em>closed source</em>. Mais cela n'a aucun sens. Vous distribuez toujours votre code source sous une licence libre et <em>open source</em>, donc en quoi l'ont-ils rendu <em>closed source</em> ? Ils ne l'ont pas fait : <em>votre code</em> est toujours <em>open source</em>. Donc, qu'ont-ils rendu <em>closed source</em> ? Et bien, la réponse est « leur code », et <em>seulement</em> leur code est <em>closed source</em>, et c'est très bien : ils sont dans leur droit d'appliquer la licence de leur choix à leur code.</p>
+
+<p>Donc la conclusion est qu'une entreprise peut venir, prendre libWidgetCrypt et proposer un petit <em>wrapper</em> autour, et commencer à faire d'énormes profits en vendant le résultat $10,000. Oui, c'est possible, mais c'est aussi un scénario assez improbable. Si tout ce qu'ils ont fait a été d'écrire un petit <em>wrapper</em>, alors vous, ou quelqu'un d'autre dans la communauté <em>open source</em> est parfaitement capable de réaliser un tel <em>wrapper</em> en un rien de temps. Et alors, tout ce qu'il vous reste à faire est de casser les prix et d'ajouter un bon gros morceau de liberté.</p>
+
+<p>Le scénario le plus probable, cependant, est qu'une entreprise arrive, prenne libWidgetCrypt et produise un gros morceau de code supplémentaire, qui utilise juste votre bibliothèque dans sa base. Alors, cette entreprise va vendre <em>son</em> code, et <em>ses extensions</em> pour un montant élevé, et ils ont parfaitement le droit de le faire. Après tout, c'est leur code.</p>
+
+<p>Croyez le ou non, ce scénario est encore un scénario bénéfique pour vous. Cette entreprise est susceptible de trouver des bugs dans libWidgetCrypt, et de les corriger. De mon expérience de ce genre de choses, ils contribuent et vous font parvenir leurs correctifs plus souvent qu'on le pense, même si rien ne les y oblige ! Oui, il arrive qu'ils corrigent la bibliothèque et s'enfuient avec les correctifs, mais encore une fois, ils ont écrit les correctifs, ils ont le droit de le faire !</p>
+
+
+<h2>Là où la GPL rate</h2>
+
+<p>Je suis entré dans beaucoup de détails sur ce que vous mettez sous GPL quand vous appliquez une licence GPL à votre code, mais je n'ai pas encore parlé de ce que j'avais annoncé au début de cet article. Je ne vous ai pas dit pourquoi la GPL n'est pas une licence libre. Pour cela, je vais me concentrer sur la dernière liberté qu'elle affirme offrir : « La liberté d'améliorer le programme, et de diffuser les améliorations (et les versions modifiées en général) au public, pour que la communauté entière en bénéficie (liberté 3). ». Supposons que j'ai une entreprise, et que je crée un produit à distribuer. J'aimerais utiliser votre bibliothèque dans mon programme, j'aimerais même améliorer votre bibliothèque, et diffuser les améliorations publiquement, pour que l'intégralité de la communauté en bénéficie. Malheureusement, je dois finir par vendre un produit, donc j'aimerais garder le cœur de mon projet <em>closed source</em>. Malheureusement, la GPL proscrit ce genre de choses.</p>
+
+<p>Nous avons donc un bon citoyen, une entreprise qui veut diffuser leurs correctifs à la bibliothèque, et pourtant la GPL leur interdit de le faire. Elle ne leur donne aucune liberté ! À la place, la GPL est un ensemble de restrictions.</p>
+
+<p>Il se peut que vous trouviez que l'ensemble de restrictions que la GPL offre est plus moralement acceptable que les licences <em>closed source</em> traditionnelles, mais ce n'est <em>pas</em> une licence libre. Elle ne donne pas de liberté, elle donne différentes restrictions.</p>
+
+
+<h2>Conclusions</h2>
+
+<p>La GPL n'est pas une licence libre, en ce qu'elle restreint les libertés aux seules personnes qu'elle juge moralement acceptables. Il y a souvent des gens qui ne tombent pas dans cette case « moralement acceptable », mais qui ont pourtant de très bonnes intentions. La GPL est donc trop restrictive pour beaucoup de projets. À la place, c'est souvent une bonne idée d'utiliser une véritable licence <em>FOSS</em>, comme la licence BSD par exemple. En faisant cela, vous ne vous rendrez pas vulnérable pour des entreprises qui voudraient passer magiquement votre code en <em>closed source</em>, car vous continuerez à le distribuer. Il se peut qu'ils passent en <em>closed source</em> un petit ajout à votre code et essayent de le vendre pour des sommes astronomiques. Cependant, dans ce cas, vous pouvez aussi reproduire le même changement mineur, et le donner entièrement librement à la communauté.</p>

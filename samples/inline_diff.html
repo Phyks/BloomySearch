@@ -1,0 +1,90 @@
+<!--
+	@author=Phyks
+	@date=24072014-2235
+	@title=Lister des corrections en ligne
+	@tags=Dev
+-->
+<p>Il m'arrive souvent de corriger des documents textes et de devoir noter facilement les fautes d'orthographe. Idéalement:</p>
+<ul>
+    <li>Un humain devrait être capable de le lire sans difficultés.</li>
+    <li>Une machine devrait pouvoir le <em>parser</em> facilement pour effectuer la correction elle-même.</li>
+    <li>Le correcteur devrait avoir un minimum de mots à recopier.</li>
+</ul>
+
+<p>Une solution est de corriger directement le document, puis de faire un <em>diff</em>. Ça marche, mais ce n'est pas des plus pratiques (on n'a pas forcément <em>diff</em> partout par exemple, ou encore le texte source n'est pas disponible pour du Markdown ou du LaTeX) et c'est quand même pas le plus lisible pour le destinataire. Pour résoudre ce problème, on peut utiliser <a href="etherpad.org"><em>etherpad</em></a> (dont une instance est disponible chez <a href="http://framapad.org/">FramaSoft</a> pour ceux qui ne veulent pas auto-héberger) par exemple, qui va garder les corrections en couleur et ce sera donc très lisible.</p>
+
+<p>Ceci dit, j'utilise une autre solution, qui ne nécessite qu'un éditeur de texte brut, et qui, un peu comme Markdown, est facilement lisible par un humain ou une machine. Je ne suis sûrement pas le seul à l'utiliser, et ça n'a sûrement pas grand chose d'extraordinaire, mais si jamais ça peut servir à d'autres personnes… (au moins à ceux à qui j'envoie mes corrections dans ce format ^^)</p>
+
+<p>Le plus simple est de partir d'un exemple. Considérons le texte suivant:</p>
+<blockquote>Cec est un text de démonstratin. Comme vous pouvez aisément le constater il y a quelques lettres manquntes et quelqueslettres en troap ou des mauvaises lettres. C'est donc un bon exiample.</blockquote>
+
+<p>Évidemment, le texte corrigé est:</p>
+<blockquote>Ceci est un texte de démonstration. Comme vous pouvez le constater aisément il y a quelques lettres manquantes et quelques lettres en trop ou des mauvaises lettres. C'est donc un bon exemple.</blockquote>
+
+<p>Pour ce texte, ma proposition de correction serait:</p>
+<pre>Cec(+i)
+text(+e)
+démonstrati(+o)n
+manqu(+a)ntes
+quelques(+ )lettres
+tro(-a)p
+ex(-ia+e)mple</pre>
+
+<p>Avec cette méthode, la correction est très courte, facilement lisible et très vite écrite. Détaillons-la un peu plus.</p>
+
+<p>Premier constat: il est très rare d'avoir des parenthèses au sein d'un mot. Et quand il y a des parenthèses, il n'y a jamais (en français correctement typographié, sauf erreur de ma part) un + ou un - qui suit une parenthèse ouvrante. On va donc englober dans des parenthèses nos corrections, directement au sein du mot. Au sein d'une parenthèse, on commencera toujours par le symbole - suivi de la lettre (ou des lettres consécutives) à retirer, s'il y a lieu. Puis viendra le symbole + suivi des lettres à insérer à la place dans le mot.</p>
+
+<p>Quand il manque une lettre dans le mot, elle est dans le champ de vision au sein de la parenthèse quand on lit le mot, et la lecture du mot est facilitée, tout en voyant immédiatement qu'il y a une faute à cet endroit. Quand il y a une lettre en trop, il suffit de ne pas lire la parenthèse pour avoir le mot complet bien écrit. Quand il y a eu une substitution, les lettres à insérer sont après le +, et les lettres à retirer sont après le -. La lecture d'un tel <em>diff</em> est donc très facile.</p>
+
+<p>Pour un ordinateur, il est également très facile de lire un tel diff. Le code serait le suivant:</p>
+<ul>
+    <li>Découper le texte en mots.</li>
+    <li>Pour chaque mot, regarder s'il y a un (ou plusieurs) groupe(s) de parenthèses contenant des + et des -, au format précédent.</li>
+    <li>Pour chaque mot qui en contient, retirer les caractères suivant le - et ajouter ceux suivant le +.</li>
+</ul>
+
+<p>Une implémentation basique (et mal codée) en Python qui traite un mot serait :</p>
+<code><pre>def inline_diff(word):
+    index = word.find('(-')
+    if index == -1:
+        index = word.find('(+')
+    if index == -1:
+        return word
+
+    index_end = word.find(')', index)
+    if index_end == -1:
+        return False
+
+    output = word[:index]
+    action = 'add'
+    for i in range(index, index_end):
+        if word[i] == '(':
+            continue
+        elif word[i] == '-':
+            action = 'remove'
+        elif word[i] == '+':
+            action = 'add'
+        else:
+            if action == 'remove':
+                continue
+            else:
+                output += word[i]
+    output += word[index_end+1:]
+    return inline_diff(output)</pre></code>
+
+<p>Il reste à traiter le cas d'un diff complet. Plutôt que de fournir le texte complet, on peut se contenter de fournir une liste des corrections, comme la liste précédente, par ordre d'apparition dans le texte. Avec très peu de précautions nécessaires, une telle liste pourrait être traitée directement par un ordinateur pour apporter les corrections.</p>
+
+
+<p><strong>Mise à jour :</strong> Enfin, n'oublions pas d'aborder quelques limitations de ce système:</p>
+<ul>
+    <li>Si le texte possède deux orthographes d'un mot, il faut prendre des précautions pour la correction. En particulier, il faut rappeler le mot à corriger autant de fois qu'il y a de corrections à faire, et on ne peut pas faire d'option <em>greedy</em>. Cependant, ceci devrait déjà être le cas si vous utilisez la méthode décrite précédemment.</li>
+    <li>Dans le cas du texte suivant:
+<blockquote>Il existe des fois où la technique peut être utilisée moyennant quelques précautions. Dans cet exemple, les technique précédentes ne fonctionneront pas sans précautions.</blockquote>
+Si on utilise <span class="monospace">technique(+s)</span>, c'est la première qui sera remplacée. Il faut donc étendre cette méthode pour traiter un contexte suffisant pour effectuer le remplacement sans ambiguïtés. Le <em>diff</em> adéquat serait:
+<pre>les technique(+s)</pre>.</li>
+    <li>On ne peut pas déplacer de mots facilement avec cette méthode. Plus exactement, c'est possible mais n'est pas optimal. Considérons le texte suivant:
+        <blockquote>Dans ce texte, les sont mots inversés.</blockquote>
+        Moyennant une implémentation un peu plus large de l'algorithme, on pourrait utiliser la méthode précédente comme ceci, pour corriger cette phrase:
+        <pre>les (-sont) mots (+sont)</pre>
+        car rien n'interdit à un mot d'être entièrement supprimé ou ajouté.</lu>
+</ul>

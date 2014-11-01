@@ -1,0 +1,26 @@
+<!--
+	@author=Phyks
+	@date=02072014-2215
+	@title=Quelques astuces pour Arduino
+	@tags=DIY, Électronique
+-->
+<p>Voici astuces en vrac pour Arduino que j'ai découvertes ces derniers jours, en codant pour <a href="http://citizenwatt.paris/">CitizenWatt</a> et en particulier pour le <a href="https://github.com/CitoyensCapteurs/CitizenWatt-sensor">capteur</a>.</p>
+
+<h2>Stocker des données en Flash</h2>
+
+<p>Il peut arriver d'avoir pas mal de données statiques dans un programme et donc d'arriver à court de RAM disponible (2ko sur un ATMega 328p / Arduino Uno). Et quand ça arrive, c'est le drame (typiquement, le Serial se mettait à faire n'importe quoi dans mon cas)…</p>
+
+<p>Par exemple, à chaque appel de <span class="monospace">Serial.println("Quelque chose");</span>, la chaîne de caractères <span class="monospace">"Quelque chose"</span> est chargée en RAM. Du coup, sur un code assez long, avec pas mal d'affichage verbeux sur la liaison série, on sature vite la RAM.</p>
+
+<p>Qu'à cela ne tienne, il est possible de stocker la chaîne dans la Flash et de la charger directement depuis la Flash. Avant, c'était compliqué, il fallait utiliser <span class="monospace">PROGMEM</span>, mais depuis la version 1.0 de l'IDE, il suffit d'entourer la chaîne de <span class="monospace">F()</span>, par exemple <span class="monospace">Serial.println(F("Quelque chose"));</span>. <a href="http://playground.arduino.cc/Learning/Memory">Source</a></p>
+
+<p>Et au passage, <a href="http://playground.arduino.cc/Code/AvailableMemory">un petit bout de code</a> pour savoir combien il reste de RAM disponible.</p>
+
+
+<h2>Les préférences de l'IDE</h2>
+
+<p>Je n'avais jamais été faire un tour dans les préférences de l'IDE non plus, principalement par flemme. Qu'à cela ne tienne, c'est désormais chose faite, et j'y ai croisé quelques options vraiment vitales.</p>
+
+<p>En particulier, <span class="monospace">Afficher les résultats détaillés pendant compilation</span> qui permettra d'avoir un <em>output</em> plus verbeux pendant la compilation.</p>
+
+<p>Mais la vraie révélation de cette soirée, c'est l'option <span class="monospace">Utiliser un éditeur externe</span>. Vous ne supportez plus l'éditeur Arduino et son indentation pourrie, ses fonctionnalités dignes de <span class="monospace">notepad</span> premier du nom et son non affichage des numéros de ligne (à part en bas dans un petit coin, inutilisable au possible pour débugger efficacement), cette option est faite pour vous ! En l'activant, Arduino ne lira plus le fichier. Vous pouvez l'éditer comme vous voulez dans un éditeur externe (Vim &lt;3) et au moment d'<em>uploader</em> le code, l'IDE Arduino ira relire le fichier, le compiler et l'<em>uploader</em>.</p>

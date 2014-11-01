@@ -1,0 +1,77 @@
+<!--
+	@author=Phyks
+	@date=29072014-2251
+	@title=Diaspora*, c'est quand même pas pour tout le monde
+	@tags=Libre
+-->
+<p>Ça faisait quelques mois que je disais que j'allais m'héberger une instance de <a href="ihttps://diasporafoundation.org/">Diaspora*</a> (un <em>pod</em> comme ça s'appelle). Finalement, sous la pression de <a href="http://tomcanac.com/">tmos</a> j'ai cédé et j'ai fini par m'occuper de ça ce weekend. Du coup, il est temps de faire un petit retour sur l'installation.</p>
+
+<p><em>Note&nbsp;:</em> Je ne m'attarderai pas sur l'historique et le but du projet (TLDR; un réseau social décentralisé et opensource), <a href="http://blog-libre.org/tag/diaspora">d'autres</a> l'ont déjà fait, ni sur l'utilisation, car je débarque et n'ai pas encore appréhendé la bête. C'est donc juste un retour sur l'installation, l'accessibilité de Diaspora* au plus grand nombre, et les premiers pas. De plus, je n'ai pas de commentaires sur ce blog statique, donc n'hésitez pas à <a href="http://phyks.me/contact.html">me contacter</a> pour en discuter.</p>
+
+<p>Il y a peu, <a href="http://maniatux.fr/index.php?article473/diaspora-c-est-pas-pour-moi">Maniatux</a> écrivait «&nbsp;Diaspora, c'est pas pour moi&nbsp;». J'y suis, j'ai réussi à l'installer, mais je serai bien tenté de dire «&nbsp;Diaspora*, c'est pas pour tout le monde&nbsp;» voire même «&nbsp;Diaspora*, si tu n'es pas geek barbu libriste, mieux vaut passer ton chemin&nbsp;» (pour l'instant, j'espère). Retour sur les principaux points.</p>
+
+<h2>S'auto-héberger</h2>
+
+<p>Forcément, on parle de réseau social décentralisé, libre et on soulève plusieurs problématiques de vie privée avec les grands réseaux sociaux actuels (Twitter, Facebook, …). Donc si on passe sur Diaspora*, ce n'est pas a priori pour aller sur un pod pré-existant, et retomber dans un silo.</p>
+
+<p>Attention, je ne dis pas que c'est le mal absolu que d'aller sur un pod hébergé par quelqu'un d'autre, loin de là. On a une certaine qualité de service garantie et les principaux pods français (<a href="http://diaspora-fr.org/">diaspora-fr.org</a>, <a href="https://framasphere.org">FramaSphère</a>, …) sont aux mains d'association auxquelles je fais infiniment plus confiance qu'aux gros du web. Mais tant qu'à être présent sur ce réseau, et si on en a la possibilité, autant s'héberger soi-même. Comme j'héberge déjà mon compte Jabber et plusieurs autres services que j'utilise, autant essayer de continuer dans la décentralisation et héberger son propre <em>pod</em>.</p>
+
+<p>La majeure partie des commentaires dans la suite sera donc liée à cet auto-hébergement. Si vous êtes sur un pod hébergé par quelqu'un d'autre, vous ne les rencontrerez sûrement jamais mais ils sont à mon avis très importants pour un projet qui promeut la décentralisation.</p>
+
+
+<h2>Ruby, mon ami…</h2>
+
+<p>Diaspora a fait le choix d'utiliser Ruby, et non PHP qui est un langage très standard, déjà largement utilisé par <a href="http://wordpress.org">Wordpress</a> et tous les autres grands CMS. La plupart des utilisateurs a l'habitude de ces scripts et sait les installer facilement&nbsp;: une base de données créée avec PHPMyAdmin, un copier/coller avec un FTP ou SCP et éventuellement un petit <em>vhost</em> et ça marche. Faire le choix d'un langage «&nbsp;exotique&nbsp;», c'est se priver d'office d'un nombre conséquent d'utilisateurs, qui ne pourront pas l'installer facilement (ne serait-ce que parce qu'ils n'ont qu'un hébergement web et pas un serveur dédié).</p>
+
+<p>Ce choix est très certainement techniquement justifié (PHP est décrié par beaucoup), mais le fait est que Ruby, c'est compliqué à utiliser pour un utilisateur moyen. Il faut installer la bonne version, les bonnes <em>gems</em>, avoir les bons droits etc. Heureusement, Diaspora* utilise RVM qui simplifie grandement l'installation… quand ça fonctionne (j'y reviens un peu plus bas). Enfin, RVM simplifie l'installation, mais la rend d'autant plus obscure&nbsp;: on enchaîne les commandes listées sur le wiki, sans vraiment savoir ce qu'elles font et on passe un temps important à les décrypter pour comprendre ce qu'il va se passer. Dans tous les cas, Node.JS et Python sont déjà largement utilisés (avec des problèmes similaires cependant), les utiliser aurait déjà pu faciliter l'accès et augmenter la documentation disponible.</p>
+
+<p><em>Note&nbsp;:</em> Diaspora* utilise aussi Node.JS, mais «&nbsp;caché&nbsp;» derrière du Ruby. On est donc surtout confronté aux problèmes avec Ruby.</p>
+
+<p>Enfin, toutes ces technologies (Node.JS / Python / Ruby / …) ne s'interfacent pas directement avec Apache. Là où pour servir un script PHP, il faut tout au plus un <em>vhost</em>, il faut ici charger tout un tas de modules spécifiques pour Apache et servir <em>via</em> <em>mod_proxy</em> l'instance de Diaspora*. Chance, le <em>vhost</em> disponible sur le wiki fonctionne directement, mais je ne doute pas que les nombreuses instructions avancées utilisées décourageront bon nombre d'utilisateurs de comprendre ce que fait réellement ce <em>vhost</em> (ce qui est fort dommage).</p>
+
+<p>C'est donc à mon avis un gros point faible du projet (et je rejoins donc Maniatux), que de reposer sur Ruby, qui est un langage quand même assez exotique, qui empêchera les possesseurs d'un hébergement web seul de l'installer chez eux. Qui plus est quand d'autres technos comme Node.JS et Python sont disponibles, et avec beaucoup plus d'utilisateurs pour aider sur les problèmes généraux et non spécifiques à Diaspora*.</p>
+
+
+<h2>Des technos (trop&nbsp;?) modernes</h2>
+
+<p>Diaspora* utilise Ruby, mais ce n'est pas la seule technologie moderne utilisée. On retrouve toutes les technos qui ont le vent en poupe : Node.JS, Boostrap, SASS, YAML, redis… Du coup, à chaque techno, une installation de paquets supplémentaires (redis par exemple), et un frein à la customisation (Bootstrap / SASS par exemple).</p>
+
+<p>Heureusement, les dépôts Debian sont bien fournis, et on peut désormais utiliser des paquets tout prêts pour redis et nodejs. Ça rajoute une étape à l'installation, et élimine définitivement les possesseurs de mutualisés, mais ça n'est pas la partie la plus compliquée.</p>
+
+<p>Les fichiers de configuration YAML sont très bien commentés et lisibles, c'est pratique. Par contre, l'utilisation de SASS oblige à connaître un minimum le fonctionnement de cet outil, et à compiler à chaque fois sa feuille de style. Je ne sais pas si les fonctions avancées de SASS simplifient grandement les feuilles de styles, mais la <em>bidouillabilité</em> en prend un coup =(.</p>
+
+
+<h2>Une documentation… minimale</h2>
+
+<p>Sur la documentation, rien à redire. La <a href="https://wiki.diasporafoundation.org/Installation/Debian/Wheezy?db=mysql&mode=production">page de documentation</a> pour Debian Wheezy est complète.</p>
+
+<p>Par contre, la documentation est minimale. Comprenez bien qu'elle est complète donc contient toutes les commandes nécessaires pour s'en sortir et installer Diaspora*, mais ne contient rien de plus. Que faire après l'installation&nbsp;? Quelques vagues liens sont disponibles en fin de page, mais il faudra se lancer dans l'exploration de son instance (quelques infos sur la façon de fermer son instance aux inscriptions, quelques informations pour faire ses premiers pas auraient été super). Un problème en marge de l'installation, une configuration un peu exotique&nbsp;? Il faudra vous débrouiller par vous-même.</p>
+
+<p>Et se débrouiller par soi-même, c'est justement ça le problème. La doc sur RVM est assez minime, les chans IRC sont déserts (ou plus exactement il y a du monde, mais aucune activité visible)… (Merci au passage à <a href="https://github.com/Flaburgan">Flaburgan</a> qui a été un des seuls à répondre :)</p>
+
+<p>En particulier, j'ai eu des problèmes avec RVM. Je n'avais pas <span class="monospace">sudo</span> disponible sur mon serveur, et selon la documentation, je devais lancer <span class="monospace">rvm autolibs read-only</span>. Mais cette commande me retournait un magnifique <span class="monospace">rvm_debug: command not found</span>, quoi que je fasse et bien que tous les fichiers nécessaires aient été sourcés par bash (visiblement, il y avait un problème à ce niveau quand même). Du coup, je cherche cette erreur dans <del>Google</del> mon moteur de recherche favori, et je ne trouve qu'une <em>issue</em> vieille de 6 mois et corrigée. Je reteste plusieurs fois, en suivant scrupuleusement la <a href="https://rvm.io/development/">doc de RVM</a> (cette fois) et non celle de Diaspora* des fois qu'elle ne soit pas à jour. Rien à faire, toujours la même erreur. Je décide donc d'aller voir sur IRC, sur <span class="monospace">#diaspora</span> et <span class="monospace">#rvm</span>, aucune activité en 2 jours… Finalement, j'ai réussi à m'en sortir en bidouillant avec un <span class="monospace">export -f rvm_debug</span> et j'ai réussi à installer Diaspora*, mais je ne sais toujours pas ce qu'il se passait…</p>
+
+
+<h2>Gourmand</h2>
+
+<p>Quand on lit les pré-requis dans le <a href="https://wiki.diasporafoundation.org/Installation/Debian/Wheezy?db=mysql&mode=production">wiki</a>, on trouve qu'il faut au minimum 512Mo de RAM (et 1Go de swap) et un CPU multi-cœur. Ces pré-requis sont à destination des gens souhaitant héberger un <em>pod</em> de taille moyenne. Étant le seul utilisateur de mon pod, Diaspora* consommera sûrement beaucoup moins de ressources, à voir. Sinon, ça veut dire que Diaspora* ne pourra pas tourner sur un Raspberry Pi (par exemple), ce qui peut être dommage quand on voit que Cyrille Borne <a href="http://blog-libre.org/post/2014/07/21/installer-owncloud-en-5-minutes-sur-un-raspberry-pi-et-autres">installe un petit serveur XMPP sur son Raspi</a> et qu'une instance de Diaspora aurait pu le rejoindre pour faire un Raspberry Pi social qui contrôle notre identité sur les réseaux.</p>
+
+
+<h2>Premiers pas</h2>
+<p>On retrouve les principaux éléments des réseaux sociaux traditionnels. L'interface m'a un peu rappelé (feu) <a href="http://status.net/">StatusNet</a> (ou plus exactement son successeur, <a href="http://pump.io/">pump.io</a>, la faute à Bootstrap je suppose). On arrive sur une vue des derniers posts très classique et on peut poster directement.</p>
+
+<p>Diaspora* met l'accent sur le contrôle de ses données, à travers les aspects (équivalents aux cercles de Google+ je pense). Du coup, chaque post peut être à destination d'un cercle différent, et ce comportement est un peu déroutant au début. En particulier, les posts sont privés par défaut, et il faut commencer à taper son message puis dérouler une liste déroulante pour modifier les aspects qui pourront voir ce post. À noter également qu'une fois un post écrit, son aspect ne peut être modifié.</p>
+
+
+<h2>Petite déception dans les fonctions de base</h2>
+<p>Diaspora* met l'accent sur le contrôle des données. Pourtant, je n'ai pas vu de moyen très simple d'exporter ses données (mais je ne doute pas que ça existe), mais surtout pour les importer. On ne peut donc pas migrer son instance sur un autre pod. C'est dommage, j'aurais bien testé sur un pod hébergé avant de passer chez moi =(.</p>
+
+<p><strong>EDIT&nbsp;</strong> Autre truc un peu énervant. Quand on cherche un utilisateur, le moindre espace en trop dans le champ de recherche empêche la recherche de s'exécuter correctement.</p>
+
+<h2>Quelques points supplémentaires</h2>
+<ul>
+    <li>J'ai essayé d'ajouter quelques contacts. Aucun problème avec ceux hébergés sur <a href="http://diaspora-fr.org/">diaspora-fr.org</a>, mais j'ai eu beaucoup plus de mal à ajouter un autre utilisateur qui s'auto-hébergeait. On n'a pas encore élucidé ce qu'il se passait, mais il semblerait que je me sois même fait bloqué par portsentry lorsque j'ai essayé de l'ajouter…</li>
+    <li>Bien penser à cocher la case «&nbsp;permettre à tous de chercher votre profil&nbsp;» pour que les autres puissent vous ajouter.</li>
+    <li><strong>EDIT&nbsp;:</strong> Je découvre petit à petit Diaspora* et pour l'instant, je regrette quand même un peu le manque de fédération. C'est décentralisé, mais c'est un gros amas de petits ilots centralisés (les <em>pods</em>). Par exemple, les contacts ne sont pas fédérés et ne s'affichent qu'au sein d'un même <em>pod</em>.</li>
+    <li><strong>EDIT&nbsp;</strong> Les mentions sont bien pratiques, comme sur Twitter, mais ne sont pas utilisables dans des commentaires…</li>
+</ul>

@@ -1,0 +1,32 @@
+<!--
+	@author=Phyks
+	@date=02122013-1502
+	@title=Graver un <em>bootloader</em> sur ATmega8
+	@tags=DIY, Électronique
+-->
+<p>Pour un projet avec mon <em>hacklab</em> <a href="http://hackens.org">hackEns</a> (éclairage de façades avec des LEDs de puissance, dans la même veine que <a href="http://www.youtube.com/watch?v=yRxQgc-OKFg">AllColorsAreBeautiful</a> du CCC, voir <a href="http://hackens.org/projets/ledhill">cette page</a> pour plus d'infos), on a eu besoin de graver 30 <em>bootloaders</em> sur des ATmega8. On n'a pas de programmateur et on le fait donc avec des Arduinos. Comme toujours, il nous a fallu 2h de debug avant de graver le premier :) (mais cette fois, ça a été rentable avec 30 <em>bootloaders</em> gravés d'un coup !).</p>
+
+<p>Du coup, je fais une petite compil' des liens qui marchent et des trucs importants à vérifier pour ne pas perdre deux heures (les messages d'erreur du soft Arduino étant *tellement* explicites... et il y a 10 méthodes différentes, chacune aboutissant à une erreur différente sur le net).</p>
+
+<p>Tout d'abord, un bon lien qui marche bien : <a href="http://arduino.cc/en/Tutorial/ArduinoToBreadboard">ArduinoToBreadboard</a> dans la doc Arduino. Les montages sont clairs et ont été testé par moi-même ces derniers jours :).</p>
+
+<h2>Gravure de <em>bootloader</em></h2>
+<p style="text-align: center;">
+    <a href="http://arduino.cc/en/uploads/Tutorial/BreadboardAVR.png"><img style="max-width: 45%; max-height: 500px;" src="http://arduino.cc/en/uploads/Tutorial/BreadboardAVR.png" alt="Montage pour graver le bootloader"/></a> <a href="@article_path/burn.jpg"><img style="max-width: 45%; max-height: 500px;" src="@article_path/burn.jpg" alt="Montage pour graver le bootloader, in situ"/></a>
+</p>
+
+<h2>Envoi de programmes</h2>
+<p style="text-align: center;">
+    <a href="@article_path/upload.jpg"><img src="@article_path/upload.jpg" alt="Montage pour l'upload" style="max-width: 45%; max-height: 500px;"/></a> <a href="@article_path/upload2.jpg"><img style="max-width: 45%; max-height: 500px;" src="@article_path/upload2.jpg" alt="Montage pour l'upload"/></a>
+</p>
+
+<h2>Notes diverses</h2>
+<ul>
+    <li>Testé avec un Arduino Uno comme programmateur, sans capacités ni résistances sur les pins de <em>reset</em>. Et ça fonctionne ! Par contre, on a eu des problèmes avec un Arduino Mega, donc on est resté sur l'Uno (sans chercher plus, sûrement un problème de <em>reset</em> automatique).</li>
+    <li>Si ça ne marche pas, vérifier que l'ATmega est bien enfoncé dans la <em>breadboard</em> ! C'est stupide, mais on oublie une fois sur deux... :)</li>
+    <li>Hyper important ! Sur le montage pour graver le <em>bootloader</em>, la résistance au <em>reset</em> est en <em>pull-up</em> (connectée au 5V) et non en <em>pull-down</em> (connectée au GND). J'ai perdu 1h là-dessus...</li>
+    <li>Testé et approuvé avec la dernière version du soft Arduino et du <em>sketch</em> ArduinoISP. Pas besoin d'une vieille version a priori.</li>
+    <li>Si ça ne marche toujours pas, bien vérifier le montage, encore et encore :)</li>
+    <li>Mieux vaut utiliser le soft Arduino que la ligne de commande avec <samp>avrdude</samp>. En effet, Arduino gère tout seul les <em>fuse bits</em> (utilisation d'un cristal externe, temps de démarrage, protection du <em>bootloader</em>) et c'est donc moins prise de tête. Sinon, pour les calculer, c'est <a href="http://www.engbedded.com/fusecalc/">par ici</a> et <a href="http://treehouseprojects.ca/fusebits/">par ici</a> pour plus d'infos sur l'utilisation d'un quartz externe.</li>
+    <li>Lorsque le <em>bootloader</em> est gravé, pour envoyer des programmes facilement, il faut qu'il puisse <em>reset</em> sur serial (sinon, il faut faire un <em>reset</em> manuel à chaque fois). Pour ça, il faut mettre une capacité et une résistance sur le pin de <em>reset</em> (cf schematics des Arduino).</li>
+</ul>

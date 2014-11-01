@@ -1,0 +1,72 @@
+<!--
+	@author=Phyks
+	@date=29042014-2030
+	@title=Élysée.fr… accessibilité et cloud souverain
+	@tags=Web
+-->
+<p>Vous avez sûrement déjà vu <a
+href="http://reflets.info/fic2014-ces-administrations-francaises-qui-livrent-ce-que-vous-avez-de-plus-intime-a-des-tiers-google-xiti/">un
+site officiel sur l'IVG utiliser Google Analytics</a>, ce qui n'est pas sans
+poser quelques problèmes d'anonymat et de confidentialité, un <a
+    href="http://reflets.info/?s=cloud+souverain">cloud souverain</a> mais vous
+n'avez sûrement pas encore vu le <a href="http://www.elysee.fr/">site de
+l'Élysée</a> (en tout cas, moi je ne l'avais jamais vu il y a encore quelques
+jours) !</p>
+
+<p>Mais hier, je suis tombé sur <a
+    href="http://blog.webatou.info/post/sur-twitter-les-popins">cet article</a>
+sur <a href="http://blog.webatou.info">le blog webatou</a> qui reportait des
+popins sur le site de l'Élysée, comportement assez étonnant pour un site
+officiel, qui <a href="http://www.elysee.fr/accessibilite/">vante son
+accessibilité</a> (mais non, il n'y a bien sûr aucun <em>popin</em> sur cette
+page…), qui fait appel à <a
+href="http://blog.temesis.com/post/2012/12/19/Elysee-site-plus-accessible-avec-temesis">une
+société</a> (dont on n'ose même pas imaginer la facture) pour améliorer son
+accessibilité. Ok, <a
+href="http://blog.barbayellow.com/2007/09/30/laccessibilite-selon-lelyseefr/">elle
+n'était pas parfaite</a>, mais c'était déjà ça.</p>
+
+<p>Mais alors, que leur a-t-il pris de mettre un énorme <em>popin</em> pour
+<q>les suivre sur Facebook</q> (sérieusement, la présidence est tellement en
+manque de reconnaissance, qu'il lui faut des <em>likes</em> sur Facebook ?).
+Pas de problèmes, je clos le popin. Prochain chargement, la même chose pour
+Twitter ! Je ferme encore, prochain rechargement, la même chose pour la
+newsletter. Je suis <strong>assez grand</strong> pour savoir où je veux vous
+suivre tout seul, pas besoin de <strong>3</strong> <em>popins</em> !</p>
+
+<p>Du coup, je me suis penché un peu plus sur le site, et je suis juste
+consterné… On passera sur l'enveloppe en haut de page qui n'a rien à voir avec
+un quelconque contact, mais permet juste de s'abonner à la newsletter, on
+passera sur les mêmes pages qui sont liées à N endroits différents sur le site,
+avec un texte différent à chaque fois, idéal pour perdre le visiteur (mais bon,
+c'est une <a
+href="http://lehollandaisvolant.net/?d=2014/03/04/14/09/35-pourquoi-les-sites-des-services-publics-sont-ils-tous-aussi-pourris">spécialité
+des services publics apparemment</a>)… Non, ce qui m'a inquiété, c'est
+l'origine du petit script JavaScript responsable du <em>popin</em>.</p>
+
+<p>Pas de problèmes, on recharge la page en activant la console de Firefox, et
+on découvre qu'il n'y a pas moins de 15 scripts différents chargés (totalisant
+un poids voisin de 900ko (oui oui, <strong>900ko</strong> soit trois fois plus
+que l'image la plus lourde de la page, mais #ToutVaBien), ce qui est finalement
+dans la moyenne des pages webs actuelles avec leur tendance à cracher du
+JavaScript à la pelle) dont <strong>un seul hébergé sur le serveur de
+l'élysée</strong>.</p>
+
+<p>Oui oui, vous avez bien lu, sur le site de l'Élysée, il y a
+<strong>14</strong> scripts (soit 93% des scripts) qui viennent d'un serveur
+externe (Facebook, google API, Twitter, Typekit et readspeaker). Et je ne parle
+que des javascripts, pas des images et des CSS (qui finalement sont presque
+tous chez l'Élysée pour le coup). Ça veut donc dire qu'au moins 4 grandes
+entreprises américaines peuvent inclure un peu ce qu'elles veulent sur la page
+de l'Élysée. Joli !</p>
+
+<p>Enfin, on notera que le seul contact que j'ai pu trouver pour l'équipe
+responsable du site de l'Élysée était une adresse postale à l'Élysée, pratique
+à l'heure où envoyer un e-mail n'a jamais été aussi simple et rapide.</p>
+
+<p>P.S. (disclaimer) : Pour tous ceux qui chercheront à relever tous les
+problèmes d'accessibilité sur mon blog, je sais qu'il est loin d'être parfait,
+et il faudra que je m'en occupe quand j'aurai 5 minutes. Sauf que dans un cas
+on parle d'un blog personnel, n'ayant aucune prétention particulière, et dans
+l'autre cas on parle d'un site <strong>institutionnel</strong> qui se prétend
+modèle d'accessibilité…</p>

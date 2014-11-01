@@ -1,0 +1,26 @@
+<!--
+	@author=Phyks
+	@date=16072014-1520
+	@title=Documenter son code PHP avec doxygen
+	@tags=Web, Dev
+-->
+<p>Je cherchais hier un moyen de générer une belle doc PHP, à partir de mes fichiers sources. Je connaissais quelques outils de la sorte (OcamlDoc, Sphinx pour Python, JavaDoc etc.) mais je n'avais jamais regardé ça en détails.</p>
+
+<p>Du coup, je suis tombé sur <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a>, qui supporte une très grande variété de langages, est utilisé par beaucoup de scripts (dont des très gros comme Drupal) et était largement suffisant pour mes besoins. Il mange vos sources et génère de <a href="http://maniacbug.github.com/RF24/classRF24.html"><del>belles documentations</del></a> des pages de doc lisibles, en HTML, LaTeX, CHM et autres.</p>
+
+<p>J'ai pas trouvé de guides ultra rapides pour démarrer (ok, j'ai pas vraiment cherché non plus) donc je liste ici les 3 commandes de base, pour avoir une doc en 5 minutes chrono.</p>
+
+<p>Pour commencer, il faut faire <span class="monospace">doxygen&nbsp;-g&nbsp;.doxygen</span> dans le répertoire du projet pour générer un fichier de configuration (option <span class="monospace">-g</span>) nommé <span class="monospace">.doxygen</span>. Voici quelques paramètres utiles à modifier:</p>
+<ul>
+    <li><span class="monospace">PROJECT_NAME</span>, mettre le nom de votre projet.</li>
+    <li>Je voulais générer uniquement une doc HTML, et tout mettre dans un dossier doc. J'ai donc mis <span class="monospace">OUTPUT_DIRECTORY</span> à <span class="monospace">"doc/"</span>, puis <span class="monospace">HTML_OUTPUT</span> à <span class="monospace">.</span> (pour que la doc HTML aille dans <span class="monospace">doc/</span>) et enfin <span class="monospace">GENERATE_LATEX</span> à <span class="monospace">NO</span> pour ne pas générer de doc en LaTeX.</li>
+    <li>Enfin, je voulais traiter tous les fichiers de mon projet, donc j'ai mis l'option <span class="monospace">RECURSIVE</span> à <span class="monospace">YES</span>.</li>
+</ul>
+
+<p>Une fois tout ceci fait, il faut que vos commentaires soient au bon format pour que doxygen les lise. Un exemple est disponible <a href="https://raw.githubusercontent.com/Phyks/Freeder/master/inc/functions.php">ici</a>.</p>
+
+<p>En gros, il faut à chaque fois redoubler les commentaires <span class="monospace">/**&nbsp;…&nbsp;*/</span> pour que doxygen les <em>parse</em>. Les premières lignes de texte dans chaque cas sont un petit paragraphe descriptif. Il est possible d'ajouter un plus long paragraphe après avoir sauté une ligne. Doxygen utilise ensuite des tags <span class="monospace">@quelquechose</span> pour noter les paramètres, les valeurs de retours, les copyrights etc.</p>
+
+<p><strong>Important</strong>, ne pas oublier de dire à doxygen d'utiliser le fichier courant avec un <span class="monospace">@file</span> dans le commentaire global du fichier.</p>
+
+<p>Une fois tous vos fichiers <em>taggés</em> correctement, lancer <span class="monospace">doxygen .doxygen</span> depuis la racine de votre projet pour générer la doc. Vous obtiendrez une belle documentation <a href="https://freederteam.github.io/Freeder/doc/files.html">comme ça</a> (ok, il y a encore du boulot sur celle-ci…).</p>

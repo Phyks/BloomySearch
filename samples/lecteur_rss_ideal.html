@@ -1,0 +1,168 @@
+<!--
+	@author=Phyks
+	@date=10072014-1724
+	@title=Mon lecteur RSS idéal
+	@tags=Web, Libre, Autohébergement
+-->
+<p><strong>EDIT :</strong> J'ai repris quelque peu le commentaire de FreshRSS, après discussion avec son auteur. J'avais raté certaines options en particulier.</p>
+<p><strong>EDIT 2:</strong> Suite à quelques retours sur cet article, je tiens à préciser que la première partie de l'article (« Panorama de ce qui existe ») est volontairement courte et caricaturale. C'est une compilation caricaturale de réflexions que j'ai entendues, et je ne m'étends volontairement pas dessus, pour ne pas allourdir inutilement cet article qui vise d'abord à présenter les points qui me semblent importants pour mon lecteur de flux RSS idéal.</p>
+<p><em>Attention, cet article est un bon pavé et il est sûrement plein de répétitions… :)</em></p>
+
+<p>Sam&amp;Max ont écrit récemment sur <a href="http://sametmax.com/pourquoi-sametmax-com-utilise-wordpress/">leur moteur idéal</a>. Le moteur de blog est un réel problème, et j'adhérerais immédiatement à un moteur de blog qui satisfasse leurs critères (mais bon, pour l'instant ma solution maison patchée de partout fonctionne pas trop mal :). En revanche, un autre point mérite une bonne réflexion et pourrait être grandement amélioré et modernisé : le lecteur RSS.</p>
+
+<p>J'utilise actuellement <a href="https://github.com/ldleman/Leed">Leed</a> sur mon serveur. J'en suis globalement satisfait, mais certains points m'agacent et ne sont pas résolus, au fil des versions. Pourtant, après avoir fait le tour des solutions existantes, c'est la solution la plus fonctionnelle que j'ai trouvée… Je profite donc de ce billet pour dresser un bilan de ce que j'ai vu passer sur les lecteurs RSS et ce que je voudrais trouver dans mon lecteur RSS idéal.</p>
+
+<h2>Panorama de ce qui existe</h2>
+
+<p>Tout d'abord, sebsauvage a fait il y a quelques temps un <a href="http://sebsauvage.net/rhaa/index.php?2013/03/15/17/15/39-arretez-de-pleurer-google-reader-hebergez-un-lecteur-rss-chez-vous">petit tour d'horizon des solutions de lecteurs RSS à héberger</a>. Je vais faire court, au risque de m'attirer les critiques :</p>
+<dl>
+    <dt>Leed</dt>
+    <dd>On attend le support du multi-utilisateur depuis un moment, il utilise <span class="monospace">mysql_</span> qui est déprécié, base MySQL obligatoire, quand même assez lourd, une licence non libre (CC BY SA NC), des développeurs principaux indisponibles (le <a href="http://leed.idleman.fr/">wiki</a> est globalement HS pour l'instant), un thème de base très moche, pas si simple à installer pour Mme Michu, des thèmes qui sont quand même limités, et <a href="https://github.com/ldleman/Leed/issues/391">bloqués par le dépôt principal</a>…</dd>
+
+    <dt>KrISS Feed</dt>
+    <dd>C'est moche, pas fonctionnel. Je ne me suis pas attardé sur le reste, qui semble assez standard.</dd>
+
+    <dt>FreshRSS</dt>
+    <dd>Il peut gérer beaucoup d'articles (100k annoncés sur le <a href="http://freshrss.org/">site</a>). C'est pas très bô (beau / ergonomique / efficace) non plus, trop compact (notamment sur smartphone, quand on a des gros doigts :), et les infos importantes ne sont pas mises en valeur (à mon avis, les flux sont les éléments principaux, à mettre en valeur ; sur FRSS, mon œil est beaucoup plus attiré par les dossiers et les boutons). C'est aussi compliqué à installer (base MySQL, même si c'est pas si compliqué, Cron manuel, instructions dans le README que ne lit pas Mme Michu), et cela risque de bloquer Mme Michu… Ses avantages par contre : il supporte très bien la charge, et l'intégration de Mozilla Persona est originale. Il a aussi de nombreuses possibilités, pour peu qu'on fouille un peu les menus de configuration.</dd>
+
+    <dt>Aeres</dt>
+    <dd>Site HS, mais ça a l'air très moche aussi.</dd>
+
+    <dt>Miniflux</dt>
+    <dd>Seul concurrent sérieux, à la vue du site. De très bonnes idées, comme le <em>full content</em> et la suppression des trackers à la volée, mais quand on ouvre la page de démo, c'est moche… et <strong>inutilisable</strong> ce qui est vraiment dommage pour un script qui est hébergé contre paiement. C'est minimaliste, trop minimaliste. Les liens pour marquer comme lus, non lus, supprimer etc sont invisibles, le texte de l'article non sélectionné est illisible, surtout sur un mobile en plein soleil, il n'y a aucun support de plugins, les raccourcis claviers sont complètement dissociés du contrôle à la souris et il me semble assez lourd quand on charge de nombreux articles.</dd>
+
+    <dt>selfoss</dt>
+    <dd>Ça commence bien, le site est beau et les <em>screenshots</em> donnent envie, mais qu'en est-il vraiment ? Déjà, c'est <strong>compliqué</strong> : l'installation est compliquée, la configuration se fait dans un fichier <span class="monospace">config.ini</span>, il n'y a pas de démo disponible, et quand on finit par l'installer pour le voir en action, on se rend compte que ce n'est quand même pas très utilisable.</dd>
+
+    <dt>RSS Lounge</dt>
+    <dd>Connu pour sa lourdeur, il fait tout (ou presque, il ne fait pas encore le café), on passe.</dd>
+
+    <dt>cartulary</dt>
+    <dd>C'est compliqué, le README est paumatoire, alors qu'il n'y a vraiment aucune raison d'expliquer de façon si compliquée une installation somme toute assez basique.</dd>
+
+    <dt>RSS Miner</dt>
+    <dd><a href="http://www.rssminer.net/">Le site</a> ne s'affiche pas correctement chez moi, la barre de gauche cachant la moitié de la page et ne se fermant pas, je m'attends au pire et je n'ai pas regardé plus en détails.</dd>
+
+    <dt>News Blur</dt>
+    <dd>Il y a des idées, notamment le côté social. Mais c'est compliqué, et hors de portée de beaucoup de monde, car ça tourne sous Django, avec du MongoDB et du PostgreSQL. Je ne suis pas sûr que le côté social soit compatible entre plusieurs instances et utilise un réseau décentralisé pré-existant, qui permettrait de le plugger facilement avec Diaspora ou n'importe quel autre logiciel du genre, et évitant de multiplier les réseaux et les protocoles.</dd>
+
+    <dt>Feed HQ</dt>
+    <dd>Inscription obligatoire pour tester, c'est aussi du python + redis + postgresql + elasticsearch, donc on oublie pour Mme Michu.</dd>
+</dl>
+
+
+<h3>Que conclure de ce panorama ?</h3>
+
+<p>Quoi que je fasse, je reviens vers Leed. De nombreuses fonctionnalités sont annoncées depuis un moment, et j'attends qu'elles voient le jour, mais il reste le plus fonctionnel et celui qui colle le mieux avec mon lecteur RSS idéal, tout en restant loin de la perfection. Le reste est moche, complexe, lent, et même les solutions payantes (mais opensources) ne s'en sortent guère mieux. Je n'utilisais pas Google Reader, mais s'il était dans la tradition des outils Google (simple, fonctionnel et rapide), je n'ai pas (encore ?) trouvé de réelle alternative.</p>
+
+<p>Concernant Leed, la première étape est bien sûr de changer le thème par défaut (Marigolds) pour un meilleur thème. Le plus complet et maintenu actuellement est <a href="https://github.com/tmos/greeder">Greeder</a> de <a href="http://tomcanac.com/">tmos</a> (bien que <a href="http://rss.remitaines.fr/">Hot Beer</a> se défende, même si je n'adhère absolument pas au format <em>webzine</em>). tmos travaille sur un pack Leed + greeder et sur l'intégration de Leed dans <a href="https://yunohost.org/">Yunohost</a>, qui devrait lui redonner un peu de fraîcheur.</p>
+
+
+<h2>Mais du coup, c'est quoi mon lecteur RSS idéal ?</h2>
+
+<h3>Rapidité, simplicité, fonctionnalité</h3>
+
+<p>Je met à jour mon lecteur RSS toutes les heures, et j'y passe donc quasiment une fois par heure. Je ne veux pas passer dix minutes à chaque fois pour réussir à cliquer sur le bon bouton, ou pour attendre que la page soit chargée.</p>
+
+<p>Il faut donc qu'il soit beau, intuitif (pour ça, Leed + greeder remplit bien ce rôle), rapide et fonctionnel. Le but est aussi de lire des articles, pas de voir défiler des titres, donc il faut que les articles soient affichés en entier (mais personnalisables <em>via</em> une option pour satisfaire tout le monde), sans avoir besoin de cliquer trois fois sur chaque article pour le lire.</p>
+
+<p>Je le regarde de partout, et beaucoup sur mon portable, dans les transports. Or, bien souvent, il n'y a pas de réseau dans les transports, et je ne veux pas d'une <a href="http://standblog.org/blog/post/2014/06/29/Web-Entrepreneur-Conference-videos-disponibles">énième app quand du HTML5 peut le faire</a>. Du coup, un thème responsive, des actions tactiles (comme Greeder, en plus étendu) et une utilisation du <em>local storage</em> et le tour est joué :)</p>
+
+<p>Toutes ces fonctionnalités (et celles qui vont suivre) peuvent paraître en contradiction avec « être léger, rapide et fonctionnel », mais si le script est suffisamment compartimenté, on peut ne charger que ce qui sera utile à l'affichage et conserver un grand nombre de fonctionnalités avancées, sans alourdir nécessairement le script (sauf dans le cas où tout serait activé en même temps).</p>
+
+
+<h3>Extensibilité et customisation</h3>
+
+<p>On ne peut pas faire un logiciel parfait, qui satisfasse tout le monde. Plutôt que d'opter pour le minimalisme et se priver ainsi de fonctions avancées, un système de plugins bien pensé me paraît mieux. Celui de Leed est bien pour ça, même s'il manque un peu de documentation. Idéalement, il faudrait même que les plugins et thèmes existants pour un des lecteurs RSS les plus répandu actuellement soient compatibles (mais là, je rêve je pense :).</p>
+
+<p>Quelques idées de plugins cools en vrac :</p>
+<ul>
+    <li>Recherche : très souvent je lis des articles, puis quelques jours plus tard je réalise que j'aurais du les garder de côté car j'en ai besoin. Sauf qu'à ce moment, je ne sais plus sur quel flux je l'ai lu, et c'est une galère de le retrouver. Un plugin de recherche sur l'agrégateur permet de résoudre ce problème.</li>
+    <li>Une implémentation de <a href="https://github.com/sebsauvage/rss-bridge">rss-bridge</a> pour le côté user-friendly.</li>
+    <li>Des plugins spécifiques par flux, pour afficher les conversations entre shaarli en tant que conversations par exemple.</li>
+    <li>Annotation de texte en direct pour noter rapidement des idées, des corrections de typo etc.</li>
+</ul>
+
+<p>Pour le côté user friendly et l'adoption par Mme Michu, il faudrait aussi une liste de plugins « officiels » (c'est-à-dire respectant les guidelines et donc compatibles) simple, à la wordpress. Il suffirait alors d'envoyer l'archive dans l'interface admin pour l'installer automatiquement.</p>
+
+<p>Idéalement, il faudrait des coding guidelines strictes, qui manquent sur les projets actuels. Notamment sur la façon d'écrire un thème ou sur les balises à utiliser dans un thème, afin de garantir la cohérence de l'interface et la rapidité du script. Leed par exemple, a un dépôt <a href="https://github.com/ldleman/Leed-market">market</a> très hétérogène, et des thèmes qui n'ont pas de base commune rendant très difficile l'implémentation de nouveau code sur plusieurs thèmes. Pire, certains plugins doivent être adaptés pour chaque thème, ce qui est une perte de temps considérable.</p>
+
+
+<h3>Une gestion fine des flux</h3>
+
+<p>Une autre fonctionnalité qui me paraît importante est de pouvoir gérer finement les flux, c'est-à-dire pouvoir prioriser, classer, trier et filtrer des flux très facilement.</p>
+
+<p>Un premier point est la gestion des doublons. Très souvent, il arrive d'avoir des articles similaires, sur le même sujet, voire même des articles tout simplement identiques, si certains flux se recoupent. Le premier cas est difficile à trier et à filtrer (même si idéalement ces articles devraient pouvoir être regroupés ensemble), mais le deuxième est très simple à filtrer. Les doublons devraient donc être masqués et gérés comme un seul et même article.</p>
+
+<p>Un autre point important est la présence du multi-utilisateur. Cela permet ainsi de ne charger qu'une seule fois les liens communs à plusieurs comptes, et d'accélerer le rafraîchissement des liens ainsi que d'alléger la charge des serveurs. Je vois deux cas d'utilisation importants : pouvoir avoir une seule instance pour tout une famille, et pouvoir avoir différents comptes par activité (un compte pro et un compte perso par exemple).</p>
+
+<p>D'autres fonctionnalités sympathiques sont proposées par certains lecteurs RSS, notamment la gestion de la priorité des flux, pour prioriser certains flux.</p>
+
+<p>Je pense aussi qu'il y a moyen de faire des trucs très sympas avec les dossiers, qui sont bien trop rigides comme fonctionnement (et que je n'utilise pas personnellement). Sûrement un système de tags, ou un système flexible par mot-clé. Mais je n'ai pas encore d'idées précises à apporter pour cette réflexion. N'hésitez pas à partager les votres :)</p>
+
+
+<h3>Transparence et protection de la vie privée</h3>
+
+<p>Un des principaux avantages de s'auto-héberger est d'avoir les contraintes de transparence, de sécurité et de protection de la vie privée qu'on se fixe, au lieu d'être dépendant d'une solution tierce sur ces points.</p>
+
+<p>Un lecteur RSS idéal, et toujours dans l'optique de l'utilisation par le plus grand nombre, devrait :</p>
+<dl>
+    <dt>afficher de manière claire les logs disponibles</dt>
+    <dd>on ne devrait jamais devoir aller chercher une information dans un obscur fichier de log écrit dans le répertoire du script, ou pire, dans les logs Apache. Au contraire, ces informations (historique de connexions, historiques de mise à jour, …) devraient être disponibles dans l'interface directement, de façon claire et compréhensible en un clin d'œil.</dd>
+
+    <dt>des statistiques claires</dt>
+    <dd>de même, une fonctionnalité absente de nombreux lecteurs RSS et qui me semble pourtant plutôt basique est la possibilité de voir en un clin d'œil quels sont les flux fréquemment mis à jour, quels sont les flux les plus actifs, les moins actifs, etc., ceci afin de pouvoir très facilement trier ses flux et supprimer les flux morts. Il m'est arrivé plusieurs fois d'avoir un flux qui a changé d'adresse, ou qui était momentanément indisponible, et de mettre plusieurs jours à m'en rendre compte, faute d'affichage clair comme "attention, le flux XXX n'a pas été mis à jour depuis N jours, alors qu'il avait une fréquence habituelle de M articles / jour"</dd>
+
+    <dt>régler finement les permissions</dt>
+    <dd>S'auto-héberger, c'est aussi pouvoir régler finement les fonctions avancées de ses logiciels. J'utilise intensivement la vue anonyme de Leed, pour ne pas avoir à me connecter à chaque visite, et car je trouve ça pratique de pouvoir voir les flux RSS que les autres suivent, on découvre bien souvent de nouveaux flux top comme ça. Mais sur la plupart des lecteurs actuels, soit tout est public, soit tout est privé. Or je ne veux pas forcément que <strong>tous</strong> mes flux soit publics. En particulier, certains flux liés à des services que j'utilise (mon Owncloud, par exemple) ne devraient pas être publics.</dd>
+
+    <dt>être compatible avec les autres outils libres à disposition</dt>
+    <dd>Enfin, même si je souhaite beaucoup de fonctions dans mon lecteur RSS, je ne veux pas qu'il devient un monstre polycéphal qui fait tout. Le libre a cela de merveilleux qu'il existe une infinité de petits outils qui font une seule petite tâche, mais la font très bien. Pourquoi implémenter aussi une gestion des favoris, quand Owncloud le propose, quand shaarli marche du tonerre et est de surcroît très simple à installer, etc. Il faut donc au contraire prévoir d'être compatible avec ces autres outils, pour que le libre soit cohérent. En particulier, owncloud propose un flux RSS accessible après authentification (POST) des "activités" sur le compte. Pratique pour suivre des dossiers partagés. Mais très peu de (si ce n'est aucun) lecteur RSS disponible ne gère cette authentification =(.</dd>
+
+    <dt>promouvoir la vie privée de l'utilisateur</dt>
+    <dd>En utilisant son propre lecteur RSS auto-hébergé, on a un contrôle total sur nos flux, et on ne divulgue pas d'informations non contrôlées à un tiers (typiquement l'hébergeur du lecteur RSS, qui pourra alors nous cibler plus finement). J'aimerais pouvoir retrouver ça dans mon lecteur avec un filtrage des liens feedburner par défaut, pour supprimer ces redirections et les remplacer par des liens directs, ainsi qu'un filtrage des publicités dans les flux, un peu à la manière des <a href="https://github.com/ldleman/Leed-market">plugins</a> urlclean et adblock pour Leed. Il pourrait aussi cacher le referer lors de l'ouverture d'un lien externe, etc. Il y a énormément de possibilités de ce côté.</dd>
+</dl>
+
+
+<h3>Toujours garder l'ergonomie en tête</h3>
+
+<p>L'ergonomie est sûrement un des points faibles des lecteurs RSS disponibles actuellement (et du logiciel libre ?). Elle est bien souvent négligée, et cela prive bon nombre d'utilisateurs d'utiliser les scripts en question.</p>
+
+<p>Pourtant, il y a moyen de faire beaucoup de choses, notamment en usant (abusant ?) de JavaScript et des fonctionnalités récentes (transitions CSS, HTML5 etc). Du drag&amp;drop s'implémente facilement, et facilite grandement l'utilisation pour beaucoup d'utilisateurs. Décrémenter un compteur d'éléments non lus en JavaScript chaque fois qu'on marque un élément comme lu prend 3 lignes de JavaScript et pourtant cela n'a été implémenté que récemment dans <a href="https://github.com/tmos/greeder/commit/446a521d240db62bc8350f54b31148429afeddb7">Greeder</a> et dans le thème par défaut de Leed.</p>
+
+<p>De plus, j'ai besoin d'une application web pour ne pas dépendre de l'ordinateur (ou du téléphone) que j'utilise. Que je sois sur mon téléphone, mon ordinateur ou n'importe quel autre périphérique, je retrouve mes news dans le même état, sans synchronisation compliquée, et sans développer un logiciel différent par périphérique. Le web est vraiment magique pour ça. Mais ce n'est pas pour autant que je ne veux pas que cette <em>webapp</em> se rapproche le plus possible d'une application native (qui sont bien souvent des <em>wrappers</em> autour d'une interface web, sur mobile, de toutes façons). Ainsi, sur mon portable, je veux retrouver des actions tactiles, un stockage en <em>local storage</em> car je risque d'être déconnecté sans raison, et une interface utilisable pleinement sans jouer avec le zoom. Et sur mon ordinateur, je veux pouvoir bénéficier d'une navigation au clavier, avec des raccourcis claviers, et de fonctionnalités avancées telles que le rafraîchissment régulier ou <a href="https://github.com/tmos/greeder/issues/71">la notification</a>, afin de se rapprocher le plus possible d'une application (et peut être un jour tourner dans sa propre instance du navigateur, pour ressembler vraiment à une application ?).</p>
+
+<p>Côté interface, celle-ci doit faciliter la lecture en mettant l'accent sur le contenu et les actions importantes. Il y a aussi beaucoup de boutons qui ont une fonction peu claire dans les scripts que j'ai pu voir : double négation dans les questions qui nous fait répondre « oui » quand on voulait dire « non », pas de rappel du nom du dossier quand on veut marquer tout un dossier comme lu (ce qui nous fait nous demander si on a bien cliqué sur le bon bouton)… D'autre part, quand je qualifiais les interfaces de « moches » au début de cet article, c'était bien souvent que l'interface était peu claire / paumatoire / clicodrôme.</p>
+
+<p>La mode est au <em>scroll</em> infini. C'est bien pratique quand on a une connexion permanente, mais dès que la connexion coupe, qu'on recharge la page, et qu'on se retrouve tout en haut, c'est nettement moins drôle. Du coup, vive la pagination, en gardant une option pour le <em>scroll</em> infini, pour ceux qui l'aiment particulièrement. Par contre, si le <em>local storage</em> est très largement utilisé, le <em>scroll</em> infini peut s'envisager, car la perte de connexion ne bloquera pas la page.</p>
+
+<p>Enfin, un dernier point essentiel à mon avis est la possibilité de se connecter automatiquement et d'avoir un <em>bookmarklet</em> efficace pour ajouter des flux (idéalement, une intégration directe avec le module d'abonnement de Firefox :). Leed a un bon <em>bookmarklet</em> mais la connexion automatique n'est arrivée que récemment. Et attention sur ce point, <a href="https://github.com/sebsauvage/Shaarli">Shaarli</a> a une connexion automatique erratique, qui a tendance à ne pas passer chez certains hébergeurs.</p>
+
+
+<h3><del>Paraître</del>Être sérieux</h3>
+
+<p>Trop de scripts de ce genre ont aussi des traductions approximatives, <em>monkey patchée</em> ou bourrées de fautes. L'inernationalisation est importante de nos jours et ne doit pas être négligée, surtout qu'elle est désormais facilitée par les outils disponibles et qu'elle n'est pas si problématique si pensée depuis le début. Faire un test sur les nombres à afficher pour afficher l'accord si besoin n'est pas très long, et il est possible de faire une fonction à appeler pour le faire à chaque fois. Ce n'est pas grand chose, mais c'est plus propre, plus beau et plus tentant. Une bonne traduction, une bonne licence, un code en anglais et des <em>coding guidelines</em> motiveront plus les gens pour écrire du code et faire des contributions.</p>
+
+<p>Il faut aussi avoir une sortie régulière de versions, quitte à sortir des versions rapprochées. Si toutes les nouvelles fonctions sont regroupées dans une branche <span class="monospace">dev</span> et regroupées dans une version stable une fois par an, Mme Michu ne verra qu'une version par an, et se dira donc que le développement est lent, même si chaque version apporte énormément de nouveautés. Au contraire, un dépôt avec des commits réguliers est plus attirant car on se dit que le logiciel vit, qu'il est suivi et qu'on n'aura donc pas à attendre longtemps si on rencontre un problème avec. Personnellement, si je rencontre un problème bloquant avec un logiciel et que celui-ci n'est pas résolu rapidement (en quelques semaines tout au plus), que je le veuile ou non, j'oublie l'existence de ce logiciel, je trouve des alternatives, et je retombe dessus par hasard quelques mois plus tard.</p>
+
+<p>De même, on ne peut pas tout développer, et on ne peut pas tout réinventer. Du coup, il devient important de virer les fonctionnalités inutiles, ou qui font doublon avec d'autres programmes, pour ne pas réinventer la roue et se consacrer sur les points essentiels pour le script.</p>
+
+
+<h3>Et tout cela… pour tous</h3>
+
+<p>Comme j'ai déjà insisté pas mal dessus, je reprendrais juste brièvement quelques points dans cette partie. Mais pour rester dans l'érgonomique et le beau, un tel script devrait être facile à installer, à configurer et à utiliser, par tous.</p>
+
+<p>Ceci passe par une interface user friendly, utilisant pleinement les fonctionnalités offertes par les navigateurs aujourd'hui (drag&amp;drop, AJAX, …). Ceci passe aussi par l'internationalisation, la présence d'une vraie liste d'extensions, facilement utilisable, une doc claire et à jour et un fonctionnement identique (dans la mesure du possible) sur la plupart des hébergements disponibles.</p>
+
+<p>Du côté de la licence, un tel lecteur RSS devrait être sous une licence libre (dans le sens de logiciel libre), ce qui n'est malheureusement pas le cas de Leed aujourd'hui (sous licence CC-BY-NC-SA), qui a d'ailleurs une licence ambiguë, déconseilleé pour les codes sources (voir <a href="http://freear.org.uk/content/creative-commons-licenses-software-just-say-no">ici</a> ou <a href="http://wiki.creativecommons.org/Frequently_Asked_Questions#Can_I_use_a_Creative_Commons_license_for_software.3F">ici</a>) et complexe comme le montre <a href="http://www.framablog.org/index.php/post/2012/10/15/non-commercial-creative-commons">cet article chez Framasoft</a>, un comble pour une licence qui se veut simple et intuitive. :)</p>
+
+<p>Enfin, un des principaux points est sûrement de pouvoir mettre à jour les flux facilement, sans y penser et sans intervention. Actuellement, la plupart des lecteurs nécessitent une intervention de l'utilisateur pour ajouter une <em>crontask</em>. C'est compliqué, source de problèmes, d'erreurs en recopiant etc, et ça complique l'installation pour pas mal de monde. Il y a sûrement moyen de rendre cela plus facile aussi, en tout cas ça serait top si c'était le cas. <a href="http://owncloud.org/">Owncloud</a> par exemple propose de lancer les tâches par AJAX, webcron ou cron, sans configuration de la part de l'utilisateur.</p>
+
+
+<h2>Conclusion</h2>
+
+<p>Aucun lecteur RSS ne me satisfait pleinement, mais Leed me paraît le moins imparfait à l'heure actuelle. En prenant des briques à gauche, à droite, on réunit la plupart des fonctions qui me paraissent importantes, mais je pense qu'il y a encore moyen de faire beaucoup pour s'affranchir des modèles classiques et établis de lecteurs RSS et proposer quelque chose d'innovant, misant sur l'ergonomie et s'adressant au plus grand nombre.</p>
+
+<p>Je vais essayer de mettre ça en pratique, en gardant en tête les points que je juge le plus important : facilité d'utilisation, ergonomie, beau et performant. Je ferai sûrement quelques articles sur des points spécifiques que je croiserai. Si vous me lisez et que vous avez un hébergement mutualisé, n'hésitez pas à me donner des infos sur votre hébergement PHP (version de PHP, modules disponibles qui sont trouvables dans le phpinfo notamment) car je ne sais pas exactement quelles sont les installations typiques de PHP sur mutualisé.</p>
+
+<p>Enfin, beaucoup de fonctionnalités seraient implémentées très facilement en utilisant les technos à la mode, nodejs ou les solutions à base de python par exemple. Mais cela oblige à se priver du côté « facilement installable par tous » car ces solutions ne sont pas disponibles sur la plupart des hébergeurs mutualisés. Ça semble aussi être un des problèmes de <a href="https://diasporafoundation.org/">Diaspora*</a> par exemple, car j'entends régulièrement qu'<a href="http://maniatux.fr/index.php?article473/diaspora-c-est-pas-pour-moi">installer son pod est compliqué</a>, notamment car Diaspora* utilise Ruby, C'est vrai, et si c'est pour utiliser un pod public, proposé par la communauté, beaucoup d'utilisateurs ne voient pas de réelles différences par rapport à Facebook,</p>

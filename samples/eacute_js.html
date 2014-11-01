@@ -1,0 +1,15 @@
+<!--
+	@author=Phyks
+	@date=17112013-0040
+	@title=Détecter l'appui sur "é" en javascript
+	@tags=Web, Dev
+-->
+<p>Pour les besoins d'un plugin pour le thème <a href="https://github.com/tmos/greeder">greeder</a> de <a href="https://github.com/ldleman/Leed">Leed</a> (gestion des raccourcis claviers), je devais détecter l'appui sur n'importe quelle touche du clavier en javascript. Pour ce faire, a priori, ce n'est pas très dur, il suffit de surveiller l'événement onkeydown et de récupérer le keycode correspondant. Cette méthode fonctionne sans problèmes sur des claviers azerty / qwerty (tout du moins pour ce que je voulais faire) mais pose de graves problèmes sur des dispositions exotiques type Bépo (ty <a href="http://tomcanac.com/blog/">tmos</a> de me l'avoir signalé :). En effet, ces dispositions possèdent de nombreuses touches particulières, qui ne sont pas traitées par la méthode précédente. Ainsi, il était impossible d'assigner un raccourci à la touche "é" ou "É" par la méthode précédente (pas de problème sur un clavier azerty/qwerty car cette touche est alors détectée comme "2").</p>
+
+<p>Après quelques recherches, j'ai découvert qu'il existait déjà deux moyens de savoir quelle touche était pressée : which et keycode. Dans la majorité des cas, ils fournissent le même résultat, sauf dans le cas qu'on veut justement traiter. Je n'ai pas approfondi la question mais il semble que which est plus général, et d'après mes tests, il fonctionne sur toutes les touches utiles d'un clavier azerty/qwerty/bépo. Attention en revanche, les codes renvoyés par which peuvent différer des keycode pour les caractères exotiques.</p>
+
+<p>Mais cela ne suffisait pas. J'avais beau utiliser which qui devait me retourner un certain code de touche, je n'avais rien. Après quelques tests, je me suis alors aperçu qu'il n'y avait purement et simplement aucun événement lancé lors de l'appui sur la touche fautive...</p>
+
+<p>En effet, il existe encore une fois plusieurs événements disponibles sur l'appui d'une touche. Le plus simple, et le plus naturellement adapté pour détecter des raccourcis claviers est onkeydown, qui n'est émis qu'une seule fois, lors de l'appui d'une touche. Mais cet événement n'est pas déclenché lors de l'appui sur certains caractères spéciaux (dont é). La solution est alors de faire un code légèrement plus lourd en utilisant onkeypress en remplacement. onkeypress est déclenché tant que la touche est appuyée (ce qui veut dire de potentiels événements multiples, contrairement à onkeydown) mais a le mérite de fonctionner avec toutes les touches des dispositions azerty/qwerty/bépo.</p>
+
+<p>En résumé, pour détecter un appui sur n'importe quelle touche du clavier, il faut utiliser l'événement onkeypress et détecter le code de la touche avec which. Cela fonctionnera, en échange d'une légère baisse de performances du script. Dommage que ceci n'ait pas été harmonisé ou simplifié un minimum...</p>
