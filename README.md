@@ -1,7 +1,14 @@
 BloomJS
 ====
-
 A javascript search engine for static websites.
+
+
+Have you ever dreamt of having a search engine on your static website ? BloomySearch implements a static index generation, when you generate your webpages, and a client-side JavaScript script which actually implements all the search logic. It downloads the index and performs the search query.
+
+To preserve bandwith, the index is stored in a binary file, using BloomFilters, instead of using a JSON index as <a href="http://lunrjs.com/">Lunr.JS</a> does.
+
+For full details about BloomySearch, please refer to <a href="http://phyks.me/2014/11/bloomysearch.html">this blog post</a>.
+
 
 ## Basic idea
 I have a static weblog, generated thanks to [Blogit](https://github.com/phyks/blogit, caution this code is ugly) and, as I only want to have html files on my server, I needed to find a way to enable users to search my blog.

@@ -30,6 +30,11 @@
 
         <h2 class="text-right" style="margin-top: 3em;">More about BloomySearch</h2>
         <hr/>
+        <p>Have you ever dreamt of having a search engine on your static website ? BloomySearch implements a static index generation, when you generate your webpages, and a client-side JavaScript script which actually implements all the search logic. It downloads the index and performs the search query.</p>
+
+        <p>To preserve bandwith, the index is stored in a binary file, using BloomFilters, instead of using a JSON index as <a href="http://lunrjs.com/">Lunr.JS</a> does.</p>
+
+        <p>For full details about BloomySearch, please refer to <a href="http://phyks.me/2014/11/bloomysearch.html">this blog post</a>.</p>
     </div>
     <script type="text/javascript" src="js/bloom.js"></script>
     <script type="text/javascript" src="js/stemmer.js"></script>
