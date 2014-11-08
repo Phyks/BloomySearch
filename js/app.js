@@ -15,7 +15,7 @@ function callback() {
 
     // Sets up the page, that is now ready
     ready = true;
-    document.getElementById('main').innerHTML = '<form role="form" id="search_form"><p class="form-group"><label for="search">What are you thinking about?</label><input class="form-control" type="text" id="search" name="search" placeholder="Type something to search for…"/></p></form>';
+    document.getElementById('main').innerHTML = '<form role="form" id="search_form"><p class="form-group"><label for="search">What are you thinking about?</label><input class="form-control" type="text" id="search" name="search" placeholder="Type something to search for…" autofocus="autofocus"/></p></form>';
 
     // Handle onchange actions
     document.getElementById('search').oninput = function (e) {
@@ -93,7 +93,7 @@ oReq.onload = function (oEvent) {
         var l = 0, tmp_array;
         for (var i = 0; i < nb_bloom_filters; i++) {
             tmp_array = byte_array.subarray(1 + nb_bloom_filters + l, 1 + nb_bloom_filters + l + lengths[i]);
-            var l = lengths[i];
+            l += lengths[i];
             bloom.push(new BloomFilter(tmp_array, error_rate));
         }
 
